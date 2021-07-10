@@ -1,5 +1,5 @@
 # wikimedia-streams
-*This package works best with TypeScript.*
+*This package works best with TypeScript, but also works with plain JavaScript.*
 
 wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams) in order to serve real-time changes to Wikimedia wikis. This entire library is typed, which makes parameter handling well-documented and defined.
 
@@ -81,3 +81,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Type documentation is partially derived from https://stream.wikimedia.org/?doc, which indicates that the documentation is under the aforementioned license as well.
+
+## Disclaimer
+You are expected to follow the Wikimedia Foundation [Terms of Use](https://foundation.wikimedia.org/wiki/Terms_of_Use) when accessing EventStreams. The package developer(s) are not liable for any damage caused by you using this package.

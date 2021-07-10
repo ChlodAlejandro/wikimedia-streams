@@ -1,0 +1,18 @@
+# IDEs
+.idea
+.vscode
+
+# Dependencies
+node_modules/
+
+# Make sure to include build artifacts - these are required for usage.
+!build/
+
+# Source files are no longer required when built.
+src/
+
+# CI/CD
+.github
+tests/
+tsconfig.json
+jest.config.js
