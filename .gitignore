@@ -1,0 +1,9 @@
+# IDEs
+.idea
+.vscode
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+build/

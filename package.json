@@ -1,0 +1,40 @@
+{
+    "name": "wikimedia-streams",
+    "version": "0.1.0",
+    "description": "Receive events from Wikimedia wikis using the Wikimedia Event Platforms' EventStreams.",
+    "main": "build/index.js",
+    "scripts": {
+        "build": "tsc",
+        "test": "jest --verbose"
+    },
+    "engines": {
+        "node": ">=12.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ChlodAlejandro/wikimedia-streams.git"
+    },
+    "keywords": [
+        "wikimedia",
+        "wikipedia",
+        "eventsource",
+        "sse"
+    ],
+    "author": "Chlod Alejandro <chlod@chlod.net>",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/ChlodAlejandro/wikimedia-streams/issues"
+    },
+    "homepage": "https://github.com/ChlodAlejandro/wikimedia-streams#readme",
+    "devDependencies": {
+        "@types/eventsource": "^1.1.6",
+        "@types/jest": "^26.0.24",
+        "@types/node": "^16.3.0",
+        "jest": "^27.0.6",
+        "ts-jest": "^27.0.3",
+        "typescript": "^4.3.5"
+    },
+    "dependencies": {
+        "eventsource": "^1.1.0"
+    }
+}
