@@ -246,6 +246,9 @@ export class WikimediaStream extends EventEmitter {
         });
         this.eventSource.addEventListener("error", (e: ErrorEvent) => {
             this.emit("error", e);
+            if (this.eventSource.readyState !== this.eventSource.OPEN) {
+                this.open();
+            }
         });
 
         this.eventSource.addEventListener("message", async (event: MessageEvent) => {
