@@ -181,6 +181,7 @@ export class WikimediaStream extends EventEmitter {
     eventSource: EventSource;
     private lastEventId: string;
     private readonly streams: SpecificWikimediaEventStream[];
+    private openCheckInterval: NodeJS.Timeout;
 
     public get status(): EventSourceState {
         return this.eventSource == null ? -1 : this.eventSource.readyState;
@@ -232,6 +233,9 @@ export class WikimediaStream extends EventEmitter {
      * Start listening to the stream.
      */
     public open(): void {
+        if (this.eventSource && this.eventSource.readyState !== this.eventSource.CLOSED)
+            this.close();
+
         // Send Last-Event-ID to pick up from cancels.
         this.eventSource = new EventSource(`https://stream.wikimedia.org/v2/stream/${
             this.streams.join(",")
@@ -263,6 +267,12 @@ export class WikimediaStream extends EventEmitter {
                 }
             }
         });
+
+        this.openCheckInterval = setInterval(() => {
+            if (this.eventSource.readyState !== this.eventSource.OPEN) {
+                this.open();
+            }
+        }, 1000);
     }
 
     /**

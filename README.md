@@ -33,6 +33,12 @@ stream.on("recentchange", (data: MediaWikiRecentChangeEvent, event) => {
 });
 ```
 
+Don't forget to close the stream when you're done (or else Node will remain open).
+
+```ts
+stream.close();
+```
+
 You can also use `.on("mediawiki.recentchange")` to listen to recent changes. A full list of streams and their available aliases are provided below.
 
 ### Available streams
