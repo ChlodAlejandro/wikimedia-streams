@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import EventSource from "eventsource";
+import EventSource, {EventSourceInitDict} from "eventsource";
 import WikimediaEventBase from "./streams/EventStream";
 import type MediaWikiRevisionCreateEvent from "./streams/MediaWikiRevisionCreateEvent";
 import type MediaWikiPageDeleteEvent from "./streams/MediaWikiPageDeleteEvent";
@@ -232,18 +232,19 @@ export class WikimediaStream extends EventEmitter {
     /**
      * Start listening to the stream.
      */
-    public open(): void {
+    public open(options: EventSourceInitDict = {}): void {
         if (this.eventSource && this.eventSource.readyState !== this.eventSource.CLOSED)
             this.close();
 
         // Send Last-Event-ID to pick up from cancels.
         this.eventSource = new EventSource(`https://stream.wikimedia.org/v2/stream/${
             this.streams.join(",")
-        }`, {
+        }`, Object.assign(options, {
             headers: this.lastEventId != null ? {
-                "Last-Event-ID": this.lastEventId
-            } : {}
-        });
+                "Last-Event-ID": this.lastEventId,
+                ...(options.headers ?? {})
+            } : (options.headers ?? {})
+        }));
 
         this.eventSource.addEventListener("open", () => {
             this.emit("open");
