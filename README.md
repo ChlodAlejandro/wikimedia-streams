@@ -89,7 +89,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Type documentation is partially derived from https://stream.wikimedia.org/?doc, which indicates that the documentation is under the aforementioned license as well.
+Type documentation is partially derived from https://stream.wikimedia.org/?doc, which indicates that the documentation is under the aforementioned license as well. As much as I'd like to MIT-license this script, this limitation prevents it.
 
 ## Disclaimer
 You are expected to follow the Wikimedia Foundation [Terms of Use](https://foundation.wikimedia.org/wiki/Terms_of_Use) when accessing EventStreams. The package developer(s) are not liable for any damage caused by you using this package.

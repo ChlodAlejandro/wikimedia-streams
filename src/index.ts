@@ -11,6 +11,7 @@ import type MediaWikiRecentChangeEvent from "./streams/MediaWikiRecentChangeEven
 import type MediaWikiRevisionScoreEvent from "./streams/MediaWikiRevisionScoreEvent";
 import type MediaWikiRevisionVisibilityChangeEvent from "./streams/MediaWikiRevisionVisibilityChangeEvent";
 import type EventGateTestEvent from "./streams/EventGateTestEvent";
+import path from "path";
 
 /**
  * The list of Wikimedia EventStreams types. Documentation for the
@@ -187,6 +188,8 @@ export class WikimediaStream extends EventEmitter {
         return this.eventSource == null ? -1 : this.eventSource.readyState;
     }
 
+    static readonly VERSION = require(path.join(__dirname, "..", "package.json")).version;
+
     static isWikimediaStream(
         stream: string
     ) : stream is SpecificWikimediaEventStream {
@@ -240,10 +243,10 @@ export class WikimediaStream extends EventEmitter {
         this.eventSource = new EventSource(`https://stream.wikimedia.org/v2/stream/${
             this.streams.join(",")
         }`, Object.assign(options, {
-            headers: this.lastEventId != null ? {
+            headers: this.lastEventId != null ? Object.assign(options.headers ?? {}, {
                 "Last-Event-ID": this.lastEventId,
-                ...(options.headers ?? {})
-            } : (options.headers ?? {})
+                "User-Agent": `wikimedia-streams/${WikimediaStream.VERSION}`
+            }) : (options.headers ?? {})
         }));
 
         this.eventSource.addEventListener("open", () => {

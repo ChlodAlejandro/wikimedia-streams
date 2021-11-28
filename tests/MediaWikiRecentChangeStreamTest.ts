@@ -1,5 +1,6 @@
 import WikimediaStream, {EventSourceState} from "../src";
 import MediaWikiRecentChangeEvent from "../src/streams/MediaWikiRecentChangeEvent";
+import { version } from "../package.json";
 
 jest.setTimeout(60000);
 
@@ -95,6 +96,7 @@ export function testRecentChange(data : MediaWikiRecentChangeEvent) {
 let stream : WikimediaStream;
 
 beforeAll((done) => {
+    expect(WikimediaStream.VERSION).toBe(version);
     stream = new WikimediaStream("recentchange");
     done();
 });
@@ -121,6 +123,7 @@ test("MediaWiki Recent Changes Stream test", async () => {
             return;
         }
     }
+
 
     expect(stream).toBeInstanceOf(WikimediaStream);
 
