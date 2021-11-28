@@ -285,6 +285,7 @@ export class WikimediaStream extends EventEmitter {
     public close(): void {
         this.eventSource.close();
         this.eventSource = null;
+        clearInterval(this.openCheckInterval);
         this.emit("close");
     }
 
