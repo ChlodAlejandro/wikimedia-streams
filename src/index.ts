@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import { EventEmitter } from "events";
 import EventSource, {EventSourceInitDict} from "eventsource";
 import WikimediaEventBase from "./streams/EventStream";
 import type MediaWikiRevisionCreateEvent from "./streams/MediaWikiRevisionCreateEvent";
