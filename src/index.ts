@@ -210,7 +210,10 @@ export class WikimediaStream extends EventEmitter {
      * Creates a new Wikimedia RecentChanges listener.
      * @param streams
      */
-    public constructor(streams: WikimediaEventStream | WikimediaEventStream[]) {
+    public constructor(
+        streams: WikimediaEventStream | WikimediaEventStream[],
+        options: EventSourceInitDict = {}
+    ) {
         super();
 
         // Validate stream type
@@ -226,7 +229,7 @@ export class WikimediaStream extends EventEmitter {
         }
         this.streams = specificStreams;
 
-        this.open();
+        this.open(options);
     }
 
     /**
