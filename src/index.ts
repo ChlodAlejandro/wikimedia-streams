@@ -213,7 +213,10 @@ export class WikimediaStream extends EventEmitter {
      * Creates a new Wikimedia RecentChanges listener.
      * @param streams
      */
-    public constructor(streams: WikimediaEventStream | WikimediaEventStream[]) {
+    public constructor(
+        streams: WikimediaEventStream | WikimediaEventStream[],
+        options: EventSourceInitDict = {}
+    ) {
         super();
 
         // Validate stream type
@@ -229,7 +232,7 @@ export class WikimediaStream extends EventEmitter {
         }
         this.streams = specificStreams;
 
-        this.open();
+        this.open(options);
     }
 
     /**
@@ -239,24 +242,32 @@ export class WikimediaStream extends EventEmitter {
         if (this.eventSource && this.eventSource.readyState !== this.eventSource.CLOSED)
             this.close();
 
-        // Send Last-Event-ID to pick up from cancels.
-        this.eventSource = new EventSource(`https://stream.wikimedia.org/v2/stream/${
-            this.streams.join(",")
-        }`, Object.assign(options, {
-            headers: this.lastEventId != null ? Object.assign(options.headers ?? {}, {
-                "Last-Event-ID": this.lastEventId,
-                "User-Agent": `wikimedia-streams/${WikimediaStream.VERSION}`
-            }) : (options.headers ?? {})
-        }));
+        // Send Last-Event-ID to pick up from cancels, overriding the
+        // Last-Event-ID header provided in options.
+
+        options.headers = this.lastEventId != null ? {
+            ...(options.headers ?? {}),
+            "Last-Event-ID": this.lastEventId
+        } : (options.headers ?? {});
+
+        this.eventSource = new EventSource(
+            `https://stream.wikimedia.org/v2/stream/${this.streams.join(",")}`,
+             options
+        );
 
         this.eventSource.addEventListener("open", () => {
             this.emit("open");
         });
+
         this.eventSource.addEventListener("error", (e: ErrorEvent) => {
             this.emit("error", e);
             if (this.eventSource.readyState !== this.eventSource.OPEN) {
-                this.open();
+                this.open(options);
             }
+        });
+
+        this.eventSource.addEventListener("close", () => {
+            this.open(options);
         });
 
         this.eventSource.addEventListener("message", async (event: MessageEvent) => {
@@ -274,7 +285,7 @@ export class WikimediaStream extends EventEmitter {
 
         this.openCheckInterval = setInterval(() => {
             if (this.eventSource.readyState !== this.eventSource.OPEN) {
-                this.open();
+                this.open(options);
             }
         }, 1000);
     }
@@ -283,6 +294,9 @@ export class WikimediaStream extends EventEmitter {
      * Stop listening to the stream.
      */
     public close(): void {
+        clearInterval(this.openCheckInterval);
+        this.openCheckInterval = null;
+
         this.eventSource.close();
         this.eventSource = null;
         clearInterval(this.openCheckInterval);

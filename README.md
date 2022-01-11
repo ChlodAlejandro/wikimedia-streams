@@ -65,13 +65,13 @@ import WikimediaStream from "wikimedia-streams";
 
 const stream = new WikimediaStream(["page-create", "revision-create"]);
 
-stream.on("page-create", (data: MediaWikiRecentChangeEvent, event) => {
-    if (data.wiki === "enwiki") {
+stream.on("page-create", (data, event) => {
+    if (data.database === "enwiki") {
         // Page created on the English Wikipedia.
     }
 });
-stream.on("revision-create", (data: MediaWikiRecentChangeEvent, event) => {
-    if (data.wiki === "enwiki") {
+stream.on("revision-create", (data, event) => {
+    if (data.database === "enwiki") {
         // Page edited on the English Wikipedia.
     }
 });
