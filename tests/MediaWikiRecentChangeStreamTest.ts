@@ -1,6 +1,6 @@
-import WikimediaStream, {EventSourceState} from "../src";
+import WikimediaStream from "../src";
 import MediaWikiRecentChangeEvent from "../src/streams/MediaWikiRecentChangeEvent";
-import { version } from "../package.json";
+import {version} from "../package.json";
 
 jest.setTimeout(60000);
 

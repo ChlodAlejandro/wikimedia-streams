@@ -74,7 +74,7 @@ export type WikimediaEventStream = SpecificWikimediaEventStream | AliasWikimedia
 
 export const WikimediaEventStreamAliasesKey
     : Partial<Record<SpecificWikimediaEventStream, AliasWikimediaEventStream>> =
-    (() : typeof WikimediaEventStreamAliasesKey => {
+    (() : Partial<Record<SpecificWikimediaEventStream, AliasWikimediaEventStream>> => {
         const outputKey = {};
 
         for (const [alias, target] of Object.entries(WikimediaEventStreamAliases)) {
@@ -108,35 +108,35 @@ export declare interface WikimediaStream {
         listener: WikimediaStreamEventListener<T>
     ): this;
     once(event: "open" | "close", listener: () => void): this;
-    once(event: "error", listener: (error: ErrorEvent) => void): this;
+    once(event: "error", listener: (error: MessageEvent<any>) => void): this;
 
     on<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
     on(event: "open" | "close", listener: () => void): this;
-    on(event: "error", listener: (error: ErrorEvent) => void): this;
+    on(event: "error", listener: (error: MessageEvent<any>) => void): this;
 
     addListener<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
     addListener(event: "open" | "close", listener: () => void): this;
-    addListener(event: "error", listener: (error: ErrorEvent) => void): this;
+    addListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
 
     off<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
     off(event: "open" | "close", listener: () => void): this;
-    off(event: "error", listener: (error: ErrorEvent) => void): this;
+    off(event: "error", listener: (error: MessageEvent<any>) => void): this;
 
     removeListener<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
     removeListener(event: "open" | "close", listener: () => void): this;
-    removeListener(event: "error", listener: (error: ErrorEvent) => void): this;
+    removeListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
 
     removeAllListeners(
         event?: "open" | "error" | "close" | WikimediaEventStream
@@ -152,7 +152,7 @@ export declare interface WikimediaStream {
         event: MessageEvent
     ): boolean;
     emit(event: "open" | "close"): this;
-    emit(event: "error", error: ErrorEvent): this;
+    emit(event: "error", error: MessageEvent<any>): this;
 
     listenerCount(event: "open" | "error" | "close" | WikimediaEventStream): number;
 
@@ -161,14 +161,14 @@ export declare interface WikimediaStream {
         listener: WikimediaStreamEventListener<T>
     ): this;
     prependListener(event: "open" | "close", listener: () => void): this;
-    prependListener(event: "error", listener: (error: ErrorEvent) => void): this;
+    prependListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
 
     prependOnceListener<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
     prependOnceListener(event: "open" | "close", listener: () => void): this;
-    prependOnceListener(event: "error", listener: (error: ErrorEvent) => void): this;
+    prependOnceListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
 
 }
 
@@ -259,7 +259,7 @@ export class WikimediaStream extends EventEmitter {
             this.emit("open");
         });
 
-        this.eventSource.addEventListener("error", (e: ErrorEvent) => {
+        this.eventSource.addEventListener("error", (e: MessageEvent<any>) => {
             this.emit("error", e);
             if (this.eventSource.readyState !== this.eventSource.OPEN) {
                 this.open(options);
