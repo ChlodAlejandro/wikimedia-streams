@@ -4,6 +4,8 @@ on:
     push:
         branches:
             - main
+            # While the branch name hasn't transitioned yet.
+            - master
 
 jobs:
     build:
