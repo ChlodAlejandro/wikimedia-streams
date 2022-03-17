@@ -19,7 +19,7 @@ import WikimediaStream from "wikimedia-streams";
 const stream = new WikimediaStream("recentchange");
 ```
 
-If you're using plain JavaScript, you'll need to add `.default` after `require()`.
+If you're using CommonJS imports, you'll need to add `.default` after `require()`.
 ```ts
 const WikimediaStream = require("wikimedia-streams").default;
 const stream = new WikimediaStream("recentchange");
