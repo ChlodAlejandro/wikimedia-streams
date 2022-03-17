@@ -14,8 +14,10 @@ import type EventGateTestEvent from "./streams/EventGateTestEvent";
 import path from "path";
 
 /**
- * The list of Wikimedia EventStreams types. Documentation for the
- * streams can be found at <https://stream.wikimedia.org/?doc>.
+ * The list of Wikimedia EventStreams types, excluding aliases (found in
+ * {@link WikimediaEventStreamAliases} instead).
+ *
+ * @see {@link https://stream.wikimedia.org/?doc|List of streams}
  */
 export const WikimediaEventStreams = <const>[
     "eventgate-main.test.event",
@@ -31,6 +33,12 @@ export const WikimediaEventStreams = <const>[
     "mediawiki.revision-visibility-change"
 ];
 
+/**
+ * The list of Wikimedia EventStreams aliases. These streams point to other
+ * streams.
+ *
+ * @see {@link https://stream.wikimedia.org/?doc|List of streams}
+ */
 export const WikimediaEventStreamAliases = <const>{
     "page-create": "mediawiki.page-create",
     "page-delete": "mediawiki.page-delete",
@@ -44,6 +52,10 @@ export const WikimediaEventStreamAliases = <const>{
     "test": "eventgate-main.test.event"
 };
 
+/**
+ * Type definition for each event stream. Respective type declarations for the
+ * event stream payloads can be found in their respective files.
+ */
 type WikimediaEventStreamEventTypes = {
     "eventgate-main.test.event": EventGateTestEvent,
     "test": EventGateTestEvent,
@@ -68,13 +80,26 @@ type WikimediaEventStreamEventTypes = {
     "mediawiki.revision-visibility-change": MediaWikiRevisionVisibilityChangeEvent
 }
 
+/**
+ * The ID of a non-alias Wikimedia event stream.
+ */
 export type SpecificWikimediaEventStream = typeof WikimediaEventStreams[number];
+/**
+ * The ID of an alias Wikimedia event stream.
+ */
 export type AliasWikimediaEventStream = keyof typeof WikimediaEventStreamAliases;
+/**
+ * The ID of a Wikimedia event stream.
+ */
 export type WikimediaEventStream = SpecificWikimediaEventStream | AliasWikimediaEventStream;
 
+/**
+ * An object mapping specific Wikimedia event streams to an array of all their aliases.
+ * @example `{ "mediawiki.page-create": ["page-create"], ... }`
+ */
 export const WikimediaEventStreamAliasesKey
-    : Partial<Record<SpecificWikimediaEventStream, AliasWikimediaEventStream>> =
-    (() : Partial<Record<SpecificWikimediaEventStream, AliasWikimediaEventStream>> => {
+    : Partial<Record<SpecificWikimediaEventStream, AliasWikimediaEventStream[]>> =
+    (() : Partial<Record<SpecificWikimediaEventStream, AliasWikimediaEventStream[]>> => {
         const outputKey = {};
 
         for (const [alias, target] of Object.entries(WikimediaEventStreamAliases)) {
@@ -95,6 +120,9 @@ export enum EventSourceState {
     Closed
 }
 
+/**
+ * Sets the type for listeners that are added to the {@link WikimediaStream} EventEmitter.
+ */
 type WikimediaStreamEventListener<T extends keyof WikimediaEventStreamEventTypes> =
     (data: WikimediaEventStreamEventTypes[T], event: MessageEvent) => void;
 
@@ -174,22 +202,55 @@ export declare interface WikimediaStream {
 
 /**
  * A WikimediaStream connects to the Wikimedia Event Platform EventStreams
- * domain (found at <https://streams.wikimedia.org>) and provides real-time
+ * domain (found at {@link https://streams.wikimedia.org}) and provides real-time
  * recent changes and actions on Wikimedia wikis.
  */
 export class WikimediaStream extends EventEmitter {
 
+    /**
+     * The EventSource which listens to streams on the Wikimedia Event Platform. Uses
+     * the `eventsource` package, which is backwards-compatible with the
+     * {@link https://developer.mozilla.org/en-US/docs/Web/API/EventSource|EventSource} Web API.
+     */
     eventSource: EventSource;
+    /**
+     * The last event ID received from the EventSource. Used to seamlessly re-listen to
+     * closed connections.
+     *
+     * @private
+     */
     private lastEventId: string;
+    /**
+     * The streams that this WikimediaStream is currently listening/will listen to.
+     *
+     * @private
+     */
     private readonly streams: SpecificWikimediaEventStream[];
+    /**
+     * A NodeJS.Timeout which checks if the EventSource is still open. The interval
+     * checks if the EventSource is still open every second, and reopens it if it's
+     * closed.
+     *
+     * @private
+     */
     private openCheckInterval: NodeJS.Timeout;
 
+    /**
+     * The current status of this stream.
+     */
     public get status(): EventSourceState {
         return this.eventSource == null ? -1 : this.eventSource.readyState;
     }
 
+    /**
+     * The version of this package. Used for the default `User-Agent` header.
+     */
     static readonly VERSION = require(path.join(__dirname, "..", "package.json")).version;
 
+    /**
+     * Checks if a given string is a valid {@link WikimediaEventStream}.
+     * @param stream The string to check.
+     */
     static isWikimediaStream(
         stream: string
     ) : stream is SpecificWikimediaEventStream {
@@ -197,12 +258,20 @@ export class WikimediaStream extends EventEmitter {
             || Object.keys(WikimediaEventStreamAliases).includes(stream);
     }
 
+    /**
+     * Checks if a given string is a valid {@link AliasWikimediaEventStream} ID.
+     * @param stream The string to check.
+     */
     static isWikimediaStreamAlias(
         stream: WikimediaEventStream
     ) : stream is AliasWikimediaEventStream {
         return WikimediaEventStreamAliases[stream] != null;
     }
 
+    /**
+     * Checks if a given string is a valid {@link SpecificWikimediaEventStream} ID.
+     * @param stream The string to check.
+     */
     static isSpecificWikimediaStream(
         stream: WikimediaEventStream
     ) : stream is SpecificWikimediaEventStream {
@@ -210,8 +279,15 @@ export class WikimediaStream extends EventEmitter {
     }
 
     /**
-     * Creates a new Wikimedia RecentChanges listener.
+     * Creates a new Wikimedia RecentChanges listener. This will automatically start the
+     * stream upon construction; you do not need to call {@link WikimediaStream#open} after
+     * instantiating this class.
+     *
      * @param streams
+     *   The streams to listen to. You may choose any stream defined by the
+     *   {@link https://stream.wikimedia.org/?doc|Wikimedia EventStreams documentation page}.
+     * @param options
+     *   Additional options for the EventSource.
      */
     public constructor(
         streams: WikimediaEventStream | WikimediaEventStream[],
@@ -219,10 +295,11 @@ export class WikimediaStream extends EventEmitter {
     ) {
         super();
 
-        // Validate stream type
+        // Convert stream ID to array if not array.
         if (!Array.isArray(streams))
             streams = [streams];
 
+        // Find the specific streams for each ID given and push them to this.streams.
         const specificStreams : SpecificWikimediaEventStream[] = [];
         for (let stream of streams) {
             if (WikimediaStream.isWikimediaStreamAlias(stream)) {
@@ -232,13 +309,18 @@ export class WikimediaStream extends EventEmitter {
         }
         this.streams = specificStreams;
 
+        // Open this stream.
         this.open(options);
     }
 
     /**
      * Start listening to the stream.
+     *
+     * @param options
+     *   Additional options for the EventSource.
      */
     public open(options: EventSourceInitDict = {}): void {
+        // If the EventSource is currently open, close it.
         if (this.eventSource && this.eventSource.readyState !== this.eventSource.CLOSED)
             this.close();
 
@@ -261,12 +343,14 @@ export class WikimediaStream extends EventEmitter {
 
         this.eventSource.addEventListener("error", (e: MessageEvent<any>) => {
             this.emit("error", e);
+            // Reopen if error was fatal.
             if (this.eventSource.readyState !== this.eventSource.OPEN) {
                 this.open(options);
             }
         });
 
         this.eventSource.addEventListener("close", () => {
+            // Reopen if connection was closed.
             this.open(options);
         });
 
@@ -275,7 +359,9 @@ export class WikimediaStream extends EventEmitter {
 
             const data : WikimediaEventBase = JSON.parse(event.data);
 
+            // Emit event.
             this.emit(data.meta.stream, data, event);
+            // Emit event to aliases of event stream.
             if (WikimediaEventStreamAliasesKey[data.meta.stream]) {
                 for (const alias of WikimediaEventStreamAliasesKey[data.meta.stream]) {
                     this.emit(alias, data, event);
@@ -283,6 +369,7 @@ export class WikimediaStream extends EventEmitter {
             }
         });
 
+        // Periodically check if the EventSource is still open, and reconnect if it isn't.
         this.openCheckInterval = setInterval(() => {
             if (this.eventSource.readyState !== this.eventSource.OPEN) {
                 this.open(options);
@@ -299,7 +386,6 @@ export class WikimediaStream extends EventEmitter {
 
         this.eventSource.close();
         this.eventSource = null;
-        clearInterval(this.openCheckInterval);
         this.emit("close");
     }
 

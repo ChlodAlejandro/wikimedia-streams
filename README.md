@@ -7,6 +7,9 @@
 wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams) in order to serve real-time changes to Wikimedia wikis. This entire library is typed, which makes parameter handling well-documented and defined.
 
 ## Usage
+
+**Note for Toolforge users:** This package requires at least Node 12.x, which is not available on the [Toolforge Grid Engine](https://wikitech.wikimedia.org/wiki/Help:Toolforge/Grid). Use the Node 12.x Docker image (`toolforge-node12-sssd-base`) on Kubernetes or [nvm](https://github.com/nvm-sh/nvm).
+
 Create a new WikimediaStream with the following:
 
 ```ts
@@ -93,3 +96,5 @@ Type documentation is partially derived from https://stream.wikimedia.org/?doc, 
 
 ## Disclaimer
 You are expected to follow the Wikimedia Foundation [Terms of Use](https://foundation.wikimedia.org/wiki/Terms_of_Use) when accessing EventStreams. The package developer(s) are not liable for any damage caused by you using this package.
+
+If you're developing a bot that runs on Wikimedia wikis which edits based on changes found on EventStreams, be sure to follow the [bot best practices](https://www.mediawiki.org/wiki/Manual:Creating_a_bot#General_guidelines_for_running_a_bot) when making edits or other changes. 
