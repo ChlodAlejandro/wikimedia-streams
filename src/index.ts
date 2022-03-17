@@ -324,13 +324,20 @@ export class WikimediaStream extends EventEmitter {
         if (this.eventSource && this.eventSource.readyState !== this.eventSource.CLOSED)
             this.close();
 
+        options.headers ??= {};
+
         // Send Last-Event-ID to pick up from cancels, overriding the
         // Last-Event-ID header provided in options.
-
-        options.headers = this.lastEventId != null ? {
-            ...(options.headers ?? {}),
-            "Last-Event-ID": this.lastEventId
-        } : (options.headers ?? {});
+        if (this.lastEventId != null) {
+            options.headers["Last-Event-ID"] = this.lastEventId;
+        }
+        // Send generic User-Agent when one has not been provided.
+        if (
+            Object.keys(options.headers)
+                .some((header) => header.toLowerCase() === "user-agent") === false
+        ) {
+            options.headers["User-Agent"] = `wikimedia-streams/${WikimediaStream.VERSION}`;
+        }
 
         this.eventSource = new EventSource(
             `https://stream.wikimedia.org/v2/stream/${this.streams.join(",")}`,
