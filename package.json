@@ -5,6 +5,7 @@
     "main": "build/index.js",
     "scripts": {
         "build": "tsc",
+        "prepublish": "npm run build",
         "test": "jest --verbose"
     },
     "engines": {
