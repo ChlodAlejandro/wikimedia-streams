@@ -1,4 +1,4 @@
-name: Push CI
+name: CI/CD
 
 on:
     push:
@@ -6,6 +6,9 @@ on:
             - main
             # While the branch name hasn't transitioned yet.
             - master
+        tags:
+            - v*
+    pull_request:
 
 jobs:
     build:
