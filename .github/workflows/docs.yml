@@ -5,6 +5,7 @@ on:
         branches:
             - main
             - master
+            - docs-setup
         tags:
             - v*
         paths:
