@@ -50,9 +50,9 @@ jobs:
             -   name: Commit new documentation
                 uses: EndBug/add-and-commit@v9
                 with:
-                    cwd: ${{ env.GITHUB_WORKSPACE }}/docs
+                    cwd: ${{ github.workspace }}/docs
                     default_author: github_actions
                     add: "."
-                    message: Updating documentation [${{ env.GITHUB_SHA }}]
+                    message: Updating documentation [${{ github.sha }}]
                     push: true
 
