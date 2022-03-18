@@ -22,34 +22,38 @@ jobs:
             # Checkout
             -   uses: actions/checkout@v3
                 with:
-                    path: project
+                    path: ./project/
             -   uses: actions/checkout@v3
                 with:
                     ref: docs
-                    path: docs
+                    path: ./docs/
 
             # Cleanup (docs)
             -   name: Clean documentation directory
-                working-directory: ./docs
+                working-directory: ./docs/
                 run: |
                     git rm --ignore-unmatch -rf .
                     git clean -fxd
 
             # Generation (project)
             -   name: Install dependencies
-                working-directory: ./project
+                working-directory: ./project/
                 run: npm ci
             -   name: Run TypeDoc
-                working-directory: ./project
+                working-directory: ./project/
                 run: |
                     npx --yes typedoc \
                         --out ../docs \
+                        --cleanOutputDir false \
                         src/index.ts
 
             # Commit
             -   name: Commit new documentation
-                working-directory: ./docs
-                run: |
-                    git add .
-                    git commit -m "Updating documentation [${GITHUB_SHA:0:6}]"
-                    git push origin docs
+                uses: EndBug/add-and-commit@v9
+                with:
+                    cwd: ./docs/
+                    default_author: github_actions
+                    add: "."
+                    message: Updating documentation [${{ GITHUB_SHA }}]
+                    push: true
+
