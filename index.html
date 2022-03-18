@@ -1,0 +1,121 @@
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>wikimedia-streams</title><meta name="description" content="Documentation for wikimedia-streams"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">wikimedia-streams</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>wikimedia-streams</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#wikimedia-streams" id="wikimedia-streams" style="color: inherit; text-decoration: none;">
+  <h1>wikimedia-streams</h1>
+</a>
+<p><em>This package works best with TypeScript, but also works with plain JavaScript.</em></p>
+<p><a href="https://www.npmjs.org/package/wikimedia-streams"><img src="https://img.shields.io/npm/v/wikimedia-streams.svg?style=flat-square" alt="npm version"></a>
+<a href="http://npm-stat.com/charts.html?package=wikimedia-streams"><img src="https://img.shields.io/npm/dm/wikimedia-streams.svg?style=flat-square" alt="npm downloads"></a></p>
+<p>wikimedia-streams connects to Wikimedia&#39;s <a href="https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams">Event Platform EventStreams</a> in order to serve real-time changes to Wikimedia wikis. This entire library is typed, which makes parameter handling well-documented and defined.</p>
+
+<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+  <h2>Usage</h2>
+</a>
+<p><strong>Note for Toolforge users:</strong> This package requires at least Node 12.x, which is not available on the <a href="https://wikitech.wikimedia.org/wiki/Help:Toolforge/Grid">Toolforge Grid Engine</a>. Use the Node 12.x Docker image (<code>toolforge-node12-sssd-base</code>) on Kubernetes or <a href="https://github.com/nvm-sh/nvm">nvm</a>.</p>
+<p>Create a new WikimediaStream with the following:</p>
+<pre><code class="language-ts"><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-2">WikimediaStream</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;wikimedia-streams&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">// &quot;recentchange&quot; can be replaced with any valid stream. </span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">stream</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-7">WikimediaStream</span><span class="hl-1">(</span><span class="hl-3">&quot;recentchange&quot;</span><span class="hl-1">);</span>
+</code></pre>
+<p>If you&#39;re using CommonJS imports, you&#39;ll need to add <code>.default</code> after <code>require()</code>.</p>
+<pre><code class="language-ts"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">WikimediaStream</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&quot;wikimedia-streams&quot;</span><span class="hl-1">).</span><span class="hl-2">default</span><span class="hl-1">;</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">stream</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-7">WikimediaStream</span><span class="hl-1">(</span><span class="hl-3">&quot;recentchange&quot;</span><span class="hl-1">);</span>
+</code></pre>
+<p>From here, you can listen to sent events using <code>.on</code>.</p>
+<pre><code class="language-ts"><span class="hl-2">stream</span><span class="hl-1">.</span><span class="hl-7">on</span><span class="hl-1">(</span><span class="hl-3">&quot;recentchange&quot;</span><span class="hl-1">, (</span><span class="hl-2">data</span><span class="hl-1">: </span><span class="hl-8">MediaWikiRecentChangeEvent</span><span class="hl-1">, </span><span class="hl-2">event</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-0">if</span><span class="hl-1"> (</span><span class="hl-2">data</span><span class="hl-1">.</span><span class="hl-2">wiki</span><span class="hl-1"> === </span><span class="hl-3">&quot;enwiki&quot;</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-4">// Edits from the English Wikipedia</span><br/><span class="hl-1">        </span><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">(</span><span class="hl-2">data</span><span class="hl-1">.</span><span class="hl-2">title</span><span class="hl-1">); </span><span class="hl-4">// Output the page title.</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">});</span>
+</code></pre>
+<p>Don&#39;t forget to close the stream when you&#39;re done (or else Node will remain open).</p>
+<pre><code class="language-ts"><span class="hl-2">stream</span><span class="hl-1">.</span><span class="hl-7">close</span><span class="hl-1">();</span>
+</code></pre>
+<p>You can also use <code>.on(&quot;mediawiki.recentchange&quot;)</code> to listen to recent changes. A full list of streams and their available aliases are provided below.</p>
+
+<a href="#available-streams" id="available-streams" style="color: inherit; text-decoration: none;">
+  <h3>Available streams</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th><strong>Stream</strong></th>
+<th><strong>Aliases</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/eventgate-main.test.event">eventgate-main.test.event</a></td>
+<td><code>test</code></td>
+<td>Testing event.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.page-create">mediawiki.page-create</a></td>
+<td><code>page-create</code></td>
+<td>Newly-created pages.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.page-delete">mediawiki.page-delete</a></td>
+<td><code>page-delete</code></td>
+<td>Deleted pages.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.page-links-change">mediawiki.page-links-change</a></td>
+<td><code>page-links-change</code></td>
+<td>Changes to page links.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.page-move">mediawiki.page-move</a></td>
+<td><code>page-move</code></td>
+<td>Page moves.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.page-properties-change">mediawiki.page-properties-change</a></td>
+<td><code>page-properties-change</code></td>
+<td>Changes to page properties.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.page-undelete">mediawiki.page-undelete</a></td>
+<td><code>page-undelete</code></td>
+<td>Undeleted pages.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.recentchange">mediawiki.recentchange</a></td>
+<td><code>recentchange</code></td>
+<td>Recent changes. The recent changes schema is drastically different from the schema of other streams.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.revision-create">mediawiki.revision-create</a></td>
+<td><code>revision-create</code></td>
+<td>Edits to pages.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.revision-score">mediawiki.revision-score</a></td>
+<td><code>revision-score</code></td>
+<td>ORES scores for edits to pages.</td>
+</tr>
+<tr>
+<td><a href="https://stream.wikimedia.org/v2/stream/mediawiki.revision-visibility-change">mediawiki.revision-visibility-change</a></td>
+<td></td>
+<td>Changes to revision visibility (caused by suppression or revision deletion).</td>
+</tr>
+</tbody></table>
+
+<a href="#multiple-streams" id="multiple-streams" style="color: inherit; text-decoration: none;">
+  <h3>Multiple streams</h3>
+</a>
+<p>You can listen to multiple streams at once by passing an array as the parameter when creating a WikimediaStream.</p>
+<pre><code class="language-ts"><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-2">WikimediaStream</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;wikimedia-streams&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">stream</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-7">WikimediaStream</span><span class="hl-1">([</span><span class="hl-3">&quot;page-create&quot;</span><span class="hl-1">, </span><span class="hl-3">&quot;revision-create&quot;</span><span class="hl-1">]);</span><br/><br/><span class="hl-2">stream</span><span class="hl-1">.</span><span class="hl-7">on</span><span class="hl-1">(</span><span class="hl-3">&quot;page-create&quot;</span><span class="hl-1">, (</span><span class="hl-2">data</span><span class="hl-1">, </span><span class="hl-2">event</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-0">if</span><span class="hl-1"> (</span><span class="hl-2">data</span><span class="hl-1">.</span><span class="hl-2">database</span><span class="hl-1"> === </span><span class="hl-3">&quot;enwiki&quot;</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-4">// Page created on the English Wikipedia.</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">});</span><br/><span class="hl-2">stream</span><span class="hl-1">.</span><span class="hl-7">on</span><span class="hl-1">(</span><span class="hl-3">&quot;revision-create&quot;</span><span class="hl-1">, (</span><span class="hl-2">data</span><span class="hl-1">, </span><span class="hl-2">event</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-0">if</span><span class="hl-1"> (</span><span class="hl-2">data</span><span class="hl-1">.</span><span class="hl-2">database</span><span class="hl-1"> === </span><span class="hl-3">&quot;enwiki&quot;</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-4">// Page edited on the English Wikipedia.</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+  <h2>License</h2>
+</a>
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>.</p>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<p>Type documentation is partially derived from <a href="https://stream.wikimedia.org/?doc">https://stream.wikimedia.org/?doc</a>, which indicates that the documentation is under the aforementioned license as well. As much as I&#39;d like to MIT-license this script, this limitation prevents it.</p>
+
+<a href="#disclaimer" id="disclaimer" style="color: inherit; text-decoration: none;">
+  <h2>Disclaimer</h2>
+</a>
+<p>You are expected to follow the Wikimedia Foundation <a href="https://foundation.wikimedia.org/wiki/Terms_of_Use">Terms of Use</a> when accessing EventStreams. The package developer(s) are not liable for any damage caused by you using this package.</p>
+<p>If you&#39;re developing a bot that runs on Wikimedia wikis which edits based on changes found on EventStreams, be sure to follow the <a href="https://www.mediawiki.org/wiki/Manual:Creating_a_bot#General_guidelines_for_running_a_bot">bot best practices</a> when making edits or other changes. </p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-reference"><a href="modules.html#default" class="tsd-kind-icon">default</a></li><li class="tsd-kind-enum"><a href="enums/EventSourceState.html" class="tsd-kind-icon">Event<wbr/>Source<wbr/>State</a></li><li class="tsd-kind-class"><a href="classes/WikimediaStream.html" class="tsd-kind-icon">Wikimedia<wbr/>Stream</a></li><li class="tsd-kind-type-alias"><a href="modules.html#AliasWikimediaEventStream" class="tsd-kind-icon">Alias<wbr/>Wikimedia<wbr/>Event<wbr/>Stream</a></li><li class="tsd-kind-type-alias"><a href="modules.html#SpecificWikimediaEventStream" class="tsd-kind-icon">Specific<wbr/>Wikimedia<wbr/>Event<wbr/>Stream</a></li><li class="tsd-kind-type-alias"><a href="modules.html#WikimediaEventStream" class="tsd-kind-icon">Wikimedia<wbr/>Event<wbr/>Stream</a></li><li class="tsd-kind-variable"><a href="modules.html#WikimediaEventStreamAliases" class="tsd-kind-icon">Wikimedia<wbr/>Event<wbr/>Stream<wbr/>Aliases</a></li><li class="tsd-kind-variable"><a href="modules.html#WikimediaEventStreamAliasesKey" class="tsd-kind-icon">Wikimedia<wbr/>Event<wbr/>Stream<wbr/>Aliases<wbr/>Key</a></li><li class="tsd-kind-variable"><a href="modules.html#WikimediaEventStreams" class="tsd-kind-icon">Wikimedia<wbr/>Event<wbr/>Streams</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
