@@ -54,6 +54,6 @@ jobs:
                     cwd: ./docs/
                     default_author: github_actions
                     add: "."
-                    message: Updating documentation [${{ GITHUB_SHA }}]
+                    message: Updating documentation [${{ github.sha }}]
                     push: true
 
