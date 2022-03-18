@@ -31,7 +31,7 @@ jobs:
             -   name: Clean documentation directory
                 working-directory: ./docs
                 run: |
-                    git rm -rf .
+                    git rm --ignore-unmatch -rf .
                     git clean -fxd
 
             # Generation (project)
