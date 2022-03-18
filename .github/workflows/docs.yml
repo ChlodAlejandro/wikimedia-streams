@@ -2,16 +2,8 @@ name: GitHub Pages documentation setup
 
 on:
     push:
-        branches:
-            - main
-            - master
-            - docs-setup
         tags:
             - v*
-        paths:
-            - .github/workflows/docs.yml
-            - src/**
-            - README.md
     workflow_dispatch:
 
 jobs:
