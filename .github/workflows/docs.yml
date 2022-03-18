@@ -1,0 +1,59 @@
+name: GitHub Pages documentation setup
+
+on:
+    push:
+        branches:
+            - main
+            - master
+            - docs-setup
+        tags:
+            - v*
+        paths:
+            - .github/workflows/docs.yml
+            - src/**
+            - README.md
+    workflow_dispatch:
+
+jobs:
+    docs:
+        name: Setup documentation
+        runs-on: ubuntu-latest
+        steps:
+            # Checkout
+            -   uses: actions/checkout@v3
+                with:
+                    path: ./project/
+            -   uses: actions/checkout@v3
+                with:
+                    ref: docs
+                    path: ./docs/
+
+            # Cleanup (docs)
+            -   name: Clean documentation directory
+                working-directory: ./docs/
+                run: |
+                    git rm --ignore-unmatch -rf .
+                    git clean -fxd
+
+            # Generation (project)
+            -   name: Install dependencies
+                working-directory: ./project/
+                run: npm ci
+            -   name: Run TypeDoc
+                working-directory: ./project/
+                run: |
+                    npx --yes typedoc \
+                        --out ../docs \
+                        --cleanOutputDir false \
+                        src/index.ts
+
+            # Commit
+            -   name: Commit new documentation
+                uses: EndBug/add-and-commit@v9
+                with:
+                    cwd: ./docs/
+                    default_author: github_actions
+                    add: "."
+                    message: Updating documentation [${{ github.sha }}]
+                    push: true
+
