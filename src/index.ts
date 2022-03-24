@@ -378,7 +378,7 @@ export class WikimediaStream extends EventEmitter {
 
         // Periodically check if the EventSource is still open, and reconnect if it isn't.
         this.openCheckInterval = setInterval(() => {
-            if (this.eventSource.readyState !== this.eventSource.OPEN) {
+            if (this.eventSource.readyState === this.eventSource.CLOSED) {
                 this.open(options);
             }
         }, 1000);
