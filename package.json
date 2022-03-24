@@ -1,6 +1,6 @@
 {
     "name": "wikimedia-streams",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Receive events from Wikimedia wikis using the Wikimedia Event Platforms' EventStreams.",
     "main": "build/index.js",
     "scripts": {
