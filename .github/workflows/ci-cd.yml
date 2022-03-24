@@ -12,6 +12,7 @@ on:
 
 jobs:
     build:
+        name: Build and test
         runs-on: ubuntu-latest
 
         strategy:
@@ -39,6 +40,8 @@ jobs:
                 run: npm test
 
     deploy:
+        name: Publish (npm)
+        needs: build
         if: github.ref_type == 'tag'
 
         runs-on: ubuntu-latest
