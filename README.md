@@ -46,19 +46,20 @@ You can also use `.on("mediawiki.recentchange")` to listen to recent changes. A 
 
 ### Available streams
 
-| **Stream** | **Aliases** | **Description** |
-|------------|-------------|-----------------|
-| [eventgate-main.test.event](https://stream.wikimedia.org/v2/stream/eventgate-main.test.event) | `test` | Testing event. |
-| [mediawiki.page-create](https://stream.wikimedia.org/v2/stream/mediawiki.page-create) | `page-create` | Newly-created pages. |
-| [mediawiki.page-delete](https://stream.wikimedia.org/v2/stream/mediawiki.page-delete) | `page-delete` | Deleted pages. |
-| [mediawiki.page-links-change](https://stream.wikimedia.org/v2/stream/mediawiki.page-links-change) | `page-links-change` | Changes to page links. |
-| [mediawiki.page-move](https://stream.wikimedia.org/v2/stream/mediawiki.page-move) | `page-move` | Page moves. | 
-| [mediawiki.page-properties-change](https://stream.wikimedia.org/v2/stream/mediawiki.page-properties-change) | `page-properties-change` | Changes to page properties. |
-| [mediawiki.page-undelete](https://stream.wikimedia.org/v2/stream/mediawiki.page-undelete) | `page-undelete` | Undeleted pages. | 
-| [mediawiki.recentchange](https://stream.wikimedia.org/v2/stream/mediawiki.recentchange) | `recentchange` | Recent changes. The recent changes schema is drastically different from the schema of other streams. |
-| [mediawiki.revision-create](https://stream.wikimedia.org/v2/stream/mediawiki.revision-create) | `revision-create` | Edits to pages. |
-| [mediawiki.revision-score](https://stream.wikimedia.org/v2/stream/mediawiki.revision-score) | `revision-score` | ORES scores for edits to pages. |
-| [mediawiki.revision-visibility-change](https://stream.wikimedia.org/v2/stream/mediawiki.revision-visibility-change) | | Changes to revision visibility (caused by suppression or revision deletion). |
+| **Stream**                                                                                                          | **Aliases** | **Description**                                                                                      |
+|---------------------------------------------------------------------------------------------------------------------|---|------------------------------------------------------------------------------------------------------|
+| [eventgate-main.test.event](https://stream.wikimedia.org/v2/stream/eventgate-main.test.event)                       | `test` | Testing event.                                                                                       |
+| [mediawiki.page-create](https://stream.wikimedia.org/v2/stream/mediawiki.page-create)                               | `page-create` | Newly-created pages.                                                                                 |
+| [mediawiki.page-delete](https://stream.wikimedia.org/v2/stream/mediawiki.page-delete)                               | `page-delete` | Deleted pages.                                                                                       |
+| [mediawiki.page-links-change](https://stream.wikimedia.org/v2/stream/mediawiki.page-links-change)                   | `page-links-change` | Changes to page links.                                                                               |
+| [mediawiki.page-move](https://stream.wikimedia.org/v2/stream/mediawiki.page-move)                                   | `page-move` | Page moves.                                                                                          | 
+| [mediawiki.page-properties-change](https://stream.wikimedia.org/v2/stream/mediawiki.page-properties-change)         | `page-properties-change` | Changes to page properties.                                                                          |
+| [mediawiki.page-undelete](https://stream.wikimedia.org/v2/stream/mediawiki.page-undelete)                           | `page-undelete` | Undeleted pages.                                                                                     | 
+| [mediawiki.recentchange](https://stream.wikimedia.org/v2/stream/mediawiki.recentchange)                             | `recentchange` | Recent changes. The recent changes schema is drastically different from the schema of other streams. |
+| [mediawiki.revision-create](https://stream.wikimedia.org/v2/stream/mediawiki.revision-create)                       | `revision-create` | Edits to pages.                                                                                      |
+| [mediawiki.revision-score](https://stream.wikimedia.org/v2/stream/mediawiki.revision-score)                         | `revision-score` | ORES scores for edits to pages.                                                                      |
+| [mediawiki.revision-tags-change](https://stream.wikimedia.org/v2/stream/mediawiki.revision-tags-change)                   |  | Changes to revision tags.                                                                            |
+| [mediawiki.revision-visibility-change](https://stream.wikimedia.org/v2/stream/mediawiki.revision-visibility-change) | | Changes to revision visibility (caused by suppression or revision deletion).                         |
 
 ### Multiple streams
 You can listen to multiple streams at once by passing an array as the parameter when creating a WikimediaStream.
