@@ -3,10 +3,10 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import Page from "./common/Page";
-import User from "./common/User";
-import Comment from "./common/Comment";
-import {MediaWikiEvent} from "./EventStream";
+import Page, {hasMediaWikiPage} from "./common/Page";
+import User, {isMediaWikiUser} from "./common/User";
+import Comment, {hasMediaWikiComment} from "./common/Comment";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
 
 /** Represents a MW Page Undelete (restore) event. */
 export default interface MediaWikiPageUndeleteEvent extends
@@ -38,4 +38,16 @@ export default interface MediaWikiPageUndeleteEvent extends
 
     };
 
+}
+
+export function isMediaWikiPageUndeleteEvent(object: any): object is MediaWikiPageUndeleteEvent {
+	return typeof object === "object"
+		&& typeof object.chronology_id === "string"
+		&& typeof object.rev_id === "number"
+		&& typeof object.prior_state === "object"
+		&& typeof object.prior_state.page_id === "number"
+		&& (!object.comment || hasMediaWikiComment(object))
+		&& hasMediaWikiPage(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }

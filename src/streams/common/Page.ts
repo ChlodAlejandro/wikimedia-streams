@@ -18,3 +18,16 @@ export default interface Page {
     page_is_redirect: boolean;
 
 }
+
+/**
+ * Determines if an object has an associated page. Required for some events.
+ * @param object The object to check
+ * @returns `true` if the object contains valid page information, `false` if otherwise.
+ */
+export function hasMediaWikiPage(object: any): object is Page {
+	return typeof object === "object"
+		&& typeof object.page_id === "number"
+		&& typeof object.page_title === "string"
+		&& typeof object.page_namespace === "number"
+		&& typeof object.page_is_redirect === "boolean";
+}

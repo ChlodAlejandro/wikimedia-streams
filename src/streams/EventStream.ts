@@ -39,6 +39,28 @@ interface WikimediaEventMeta {
     /** Name of the stream/queue/dataset that this event belongs in */
     stream: WikimediaEventStream;
 
+	topic: string;
+	partition: number;
+	offset: number;
+
+}
+
+/**
+ * Determines if an object is a WikimediaEventMeta object. Required for all events. If
+ * an event does not have the required meta information, it may be malformed.
+ *
+ * @param object The object to check.
+ * @returns `true` if the object is a WikimediaEventMeta object, `false if otherwise.
+ */
+export function isWikimediaEventMeta(object: any): object is WikimediaEventMeta {
+	return typeof object === "object"
+		&& typeof object.uri === "string"
+		&& typeof object.request_id === "string"
+		&& typeof object.id === "string"
+		&& typeof object.dt === "string"
+		&& typeof object.domain === "string"
+		&& typeof object.stream === "string";
+
 }
 
 export interface WikimediaEventBase {
@@ -52,9 +74,33 @@ export interface WikimediaEventBase {
 
 }
 
+/**
+ * Determines if an object is a Wikimedia event. This checks for the schema string and
+ * WikimediaEventMeta property (`meta`).
+ *
+ * @param object The object to check
+ */
+export function isWikimediaEvent(object: any): object is WikimediaEventBase {
+	return typeof object === "object"
+		&& typeof object.schema === "string"
+		&& isWikimediaEventMeta(object.meta);
+}
+
 export interface MediaWikiEvent extends WikimediaEventBase {
     /** The name of the wiki database this event entity belongs to. */
     database: string;
+}
+
+/**
+ * Determines if an object is a MediaWiki event. This checks for the schema string, the
+ * WikimediaEventMeta property (`meta`), and the database string.
+ *
+ * @param object The object to check
+ */
+export function isMediaWikiEvent(object: any): object is MediaWikiEvent {
+	return typeof object === "object"
+		&& typeof object.database === "string"
+		&& isWikimediaEvent(object);
 }
 
 type WikimediaEvent =

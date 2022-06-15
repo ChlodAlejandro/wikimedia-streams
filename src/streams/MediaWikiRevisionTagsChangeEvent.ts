@@ -3,10 +3,11 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import {MediaWikiEvent} from "./EventStream";
-import Page from "./common/Page";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
+import Page, {hasMediaWikiPage} from "./common/Page";
 import Comment from "./common/Comment";
-import Revision from "./common/Revision";
+import Revision, {hasMediaWikiRevision} from "./common/Revision";
+import {isMediaWikiUser} from "./common/User";
 
 /** Represents a MW Revision Tags Change event. */
 export default interface MediaWikiRevisionTagsChangeEvent extends
@@ -27,4 +28,15 @@ export default interface MediaWikiRevisionTagsChangeEvent extends
 		tags: string[];
 	};
 
+}
+
+export function isMediaWikiRevisionTagsChangeEvent(object: any): object is MediaWikiRevisionTagsChangeEvent {
+	return typeof object === "object"
+		&& Array.isArray(object.tags)
+		&& typeof object.prior_state === "object"
+		&& Array.isArray(object.prior_state.tags)
+		&& hasMediaWikiPage(object)
+		&& hasMediaWikiRevision(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }

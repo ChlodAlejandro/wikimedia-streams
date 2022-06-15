@@ -3,11 +3,11 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import User from "./common/User";
-import {MediaWikiEvent} from "./EventStream";
-import Page from "./common/Page";
+import User, {isMediaWikiUser} from "./common/User";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
+import Page, {hasMediaWikiPage} from "./common/Page";
 import Comment from "./common/Comment";
-import Revision from "./common/Revision";
+import Revision, {hasMediaWikiRevision} from "./common/Revision";
 
 interface Visibility {
 
@@ -22,7 +22,7 @@ interface Visibility {
 
 }
 
-    /** Represents a MW Revision Create event. */
+    /** Represents a MW Revision Visibility Change event. */
 export default interface MediaWikiRevisionVisibilityChangeEvent extends
     MediaWikiEvent, Page, Comment, Revision {
 
@@ -47,4 +47,21 @@ export default interface MediaWikiRevisionVisibilityChangeEvent extends
 
     }
 
+}
+
+export function isMediaWikiRevisionVisibilityChangeEvent(object: any): object is MediaWikiRevisionVisibilityChangeEvent {
+	return typeof object === "object"
+		&& typeof object.chronology_id === "string"
+		&& typeof object.visibility === "object"
+		&& typeof object.visibility.text === "boolean"
+		&& typeof object.visibility.user === "boolean"
+		&& typeof object.visibility.comment === "boolean"
+		&& typeof object.prior_state.visibility === "object"
+		&& typeof object.prior_state.visibility.text === "boolean"
+		&& typeof object.prior_state.visibility.user === "boolean"
+		&& typeof object.prior_state.visibility.comment === "boolean"
+		&& hasMediaWikiPage(object)
+		&& hasMediaWikiRevision(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }

@@ -32,3 +32,16 @@ export default interface User {
     user_edit_count?: string;
 
 }
+
+/**
+ * Determines if an object is a User object. Required for some events.
+ *
+ * @param object The object to check
+ * @returns `true` if the object contains valid page information, `false` if otherwise.
+ */
+export function isMediaWikiUser(object: any): object is User {
+	return typeof object === "object"
+		&& typeof object.user_text === "string"
+		&& typeof object.user_is_bot === "boolean"
+		&& Array.isArray(object.user_groups);
+}

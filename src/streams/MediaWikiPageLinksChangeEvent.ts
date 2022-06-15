@@ -3,9 +3,9 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import Page from "./common/Page";
-import User from "./common/User";
-import {MediaWikiEvent} from "./EventStream";
+import Page, {hasMediaWikiPage} from "./common/Page";
+import User, {isMediaWikiUser} from "./common/User";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
 
 interface LinkChange {
 
@@ -47,4 +47,25 @@ export default interface MediaWikiPageLinksChangeEvent extends
      */
     added_links?: LinkChange[];
 
+}
+
+export function isMediaWikiPageLinksChangeEvent(object: any): object is MediaWikiPageLinksChangeEvent {
+	return typeof object === "object"
+		&& typeof object.chronology_id === "string"
+		&& typeof object.rev_id === "number"
+		&& (!object.added_links || (Array.isArray(object.added_links)
+			&& object.added_links.every((v: any) =>
+				typeof v.link === "string"
+				&& typeof v.external === "boolean"
+			)
+		))
+		&& (!object.removed_links || (Array.isArray(object.removed_links)
+			&& object.removed_links.every((v: any) =>
+				typeof v.link === "string"
+				&& typeof v.external === "boolean"
+			)
+		))
+		&& hasMediaWikiPage(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }

@@ -3,19 +3,9 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import Page from "./common/Page";
-import User from "./common/User";
-import {MediaWikiEvent} from "./EventStream";
-
-interface PageProperties {
-
-    /** Link being removed */
-    link: string;
-
-    /** Whether the link is external */
-    external: boolean;
-
-}
+import Page, {hasMediaWikiPage} from "./common/Page";
+import User, {isMediaWikiUser} from "./common/User";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
 
 /** Represents a MW Properties Change event. */
 export default interface MediaWikiPagePropertiesChangeEvent extends
@@ -34,7 +24,7 @@ export default interface MediaWikiPagePropertiesChangeEvent extends
      * not be present here. If the property was changed, its new
      * value would be present in the 'added_properties' object.
      */
-    removed_properties?: PageProperties[];
+    removed_properties?: Record<string, any>;
 
     /**
      * The new page properties. This map would only contain properties
@@ -42,6 +32,16 @@ export default interface MediaWikiPagePropertiesChangeEvent extends
      * would not be present here. If the property was changed, its
      * previous value would be present in the 'removed_properties' object.
      */
-    added_properties?: PageProperties[];
+    added_properties?: Record<string, any>;
 
+}
+
+export function isMediaWikiPagePropertiesChangeEvent(object: any): object is MediaWikiPagePropertiesChangeEvent {
+	return typeof object === "object"
+		&& typeof object.rev_id === "number"
+		&& (!object.added_properties || typeof object.added_properties === "object")
+		&& (!object.removed_properties || typeof object.removed_properties === "object")
+		&& hasMediaWikiPage(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }

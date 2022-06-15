@@ -3,10 +3,10 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import Page from "./common/Page";
-import User from "./common/User";
-import Comment from "./common/Comment";
-import {MediaWikiEvent} from "./EventStream";
+import Page, {hasMediaWikiPage} from "./common/Page";
+import User, {isMediaWikiUser} from "./common/User";
+import Comment, {hasMediaWikiComment} from "./common/Comment";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
 
 /** Represents a MW Page Delete event. */
 export default interface MediaWikiPageDeleteEvent extends
@@ -27,4 +27,15 @@ export default interface MediaWikiPageDeleteEvent extends
      */
     rev_count: number;
 
+}
+
+export function isMediaWikiPageDeleteEvent(object: any): object is MediaWikiPageDeleteEvent {
+	return typeof object === "object"
+		&& typeof object.chronology_id === "string"
+		&& typeof object.rev_id === "number"
+		&& typeof object.rev_count === "number"
+		&& (!object.comment || hasMediaWikiComment(object))
+		&& hasMediaWikiPage(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }

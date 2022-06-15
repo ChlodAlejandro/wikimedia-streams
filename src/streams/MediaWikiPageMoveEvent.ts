@@ -3,13 +3,17 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import Page from "./common/Page";
-import Comment from "./common/Comment";
-import {MediaWikiEvent} from "./EventStream";
+import Page, {hasMediaWikiPage} from "./common/Page";
+import Comment, {hasMediaWikiComment} from "./common/Comment";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
+import User, {isMediaWikiUser} from "./common/User";
 
 /** Represents a MW Revision Create event. */
 export default interface MediaWikiPageMoveEvent extends
     MediaWikiEvent, Page, Comment {
+
+	/** Represents the user that performed this change. */
+	performer?: User;
 
     /** The head revision of the page at the time of this event. */
     rev_id: number;
@@ -53,4 +57,17 @@ export default interface MediaWikiPageMoveEvent extends
 
     }
 
+}
+
+export function isMediaWikiPageMoveEvent(object: any): object is MediaWikiPageMoveEvent {
+	return typeof object === "object"
+		&& typeof object.rev_id === "number"
+		&& typeof object.prior_state === "object"
+		&& typeof object.prior_state.page_title === "string"
+		&& typeof object.prior_state.page_namespace === "number"
+		&& typeof object.prior_state.rev_id === "number"
+		&& (!object.comment || hasMediaWikiComment(object))
+		&& hasMediaWikiPage(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }

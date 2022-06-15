@@ -3,10 +3,10 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import User from "./common/User";
-import {MediaWikiEvent} from "./EventStream";
-import Page from "./common/Page";
-import Comment from "./common/Comment";
+import User, {isMediaWikiUser} from "./common/User";
+import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
+import Page, {hasMediaWikiPage} from "./common/Page";
+import Comment, {hasMediaWikiComment} from "./common/Comment";
 import Revision from "./common/Revision";
 
 interface ModelScore {
@@ -94,4 +94,32 @@ export default interface MediaWikiRevisionScoreEvent extends
      */
     errors?: Record<string, ModelError>;
 
+}
+
+export function isMediaWikiRevisionScoreEvent(object: any): object is MediaWikiRevisionScoreEvent {
+	return typeof object === "object"
+		&& typeof object.rev_id === "number"
+		&& typeof object.rev_parent_id === "number"
+		&& typeof object.rev_timestamp === "string"
+		&& (!object.scores || (typeof object.scores === "object"
+			&& Object.values(object.scores).every((v: any) =>
+				typeof v.model_name === "string"
+				&& typeof v.model_version === "string"
+				&& Array.isArray(v.prediction)
+				&& typeof v.probability === "object"
+				&& Object.values(v.probability).every(v2 => typeof v2 === "number")
+			)
+		))
+		&& (!object.errors || (typeof object.errors === "object"
+			&& Object.values(object.errors).every((v: any) =>
+				typeof v.model_name === "string"
+				&& typeof v.model_version === "string"
+				&& typeof v.type === "string"
+				&& typeof v.message === "string"
+			)
+		))
+		&& (!object.comment || hasMediaWikiComment(object))
+		&& hasMediaWikiPage(object)
+		&& isMediaWikiUser((object as any).performer)
+		&& isMediaWikiEvent(object);
 }
