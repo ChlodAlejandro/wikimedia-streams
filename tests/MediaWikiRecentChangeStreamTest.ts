@@ -94,6 +94,7 @@ export function testRecentChange(data : MediaWikiRecentChangeEvent) {
 }
 
 let stream : WikimediaStream;
+const minToPass = 10;
 
 beforeAll((done) => {
     expect(WikimediaStream.VERSION).toBe(version);
@@ -101,55 +102,50 @@ beforeAll((done) => {
     done();
 });
 
-test("MediaWiki Recent Changes Stream test", async () => {
-    const mainOK = {
-        "new": false,
-        "edit": false,
-        "categorize": false,
-        "log": false
-    };
-    const aliasOK = {
-        "new": false,
-        "edit": false,
-        "categorize": false,
-        "log": false
-    };
+let done = false;
+test("MediaWiki Recent Changes Stream test", (doneFn) => {
+    const status = {};
 
     function stopCheck() {
         if (
-            Object.values(mainOK).reduce((p, n) => p && n)
-            && Object.values(aliasOK).reduce((p, n) => p && n)
-        ) {
-            return;
-        }
+			!done
+			&& Object.keys(status).length > 0
+			&& Object.values(status).every((typeSet) =>
+				Object.values(typeSet).every(v => v >= minToPass)
+			)
+		) {
+			done = true;
+			doneFn();
+		}
     }
-
 
     expect(stream).toBeInstanceOf(WikimediaStream);
 
-    stream.on("mediawiki.recentchange", (data, event) => {
-        // Meta
-        expect(data.$schema).toBe("/mediawiki/recentchange/1.0.0")
+	function observeStream(streamName: "mediawiki.recentchange" | "recentchange") {
+		stream.on(streamName, (data, event) => {
+			// Meta
+			expect(data.$schema).toBe("/mediawiki/recentchange/1.0.0")
 
-        if (!mainOK[data.type]) {
-            mainOK[data.type] = true;
-            testRecentChange(data);
-        }
+			if (status[streamName] == null)
+				status[streamName] = {
+					"new": 0,
+					"edit": 0,
+					"categorize": 0,
+					"log": 0
+				};
 
-        stopCheck();
-    });
+			if (status[streamName][data.type] < minToPass) {
+				testRecentChange(data);
+				status[streamName][data.type]++;
+				console.log(JSON.stringify(status));
+			}
 
-    stream.on("recentchange", (data, event) => {
-        // Meta
-        expect(data.$schema).toBe("/mediawiki/recentchange/1.0.0")
+			stopCheck();
+		});
+	}
 
-        if (!aliasOK[data.type]) {
-            aliasOK[data.type] = true;
-            testRecentChange(data);
-        }
-
-        stopCheck();
-    });
+	observeStream("mediawiki.recentchange");
+	observeStream("recentchange");
 });
 
 afterAll((done) => {
