@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import {EventEmitter} from "events";
 import EventSource, {EventSourceInitDict} from "eventsource";
 import WikimediaEventBase from "./streams/EventStream";
 import type MediaWikiRevisionCreateEvent from "./streams/MediaWikiRevisionCreateEvent";
@@ -12,6 +12,7 @@ import type MediaWikiRevisionScoreEvent from "./streams/MediaWikiRevisionScoreEv
 import type MediaWikiRevisionVisibilityChangeEvent from "./streams/MediaWikiRevisionVisibilityChangeEvent";
 import type EventGateTestEvent from "./streams/EventGateTestEvent";
 import path from "path";
+import MediaWikiRevisionTagsChangeEvent from "./streams/MediaWikiRevisionTagsChangeEvent";
 
 /**
  * The list of Wikimedia EventStreams types, excluding aliases (found in
@@ -30,6 +31,7 @@ export const WikimediaEventStreams = <const>[
     "mediawiki.recentchange",
     "mediawiki.revision-create",
     "mediawiki.revision-score",
+	"mediawiki.revision-tags-change",
     "mediawiki.revision-visibility-change"
 ];
 
@@ -77,6 +79,7 @@ type WikimediaEventStreamEventTypes = {
     "revision-create": MediaWikiRevisionCreateEvent,
     "mediawiki.revision-score": MediaWikiRevisionScoreEvent,
     "revision-score": MediaWikiRevisionScoreEvent,
+	"mediawiki.revision-tags-change": MediaWikiRevisionTagsChangeEvent,
     "mediawiki.revision-visibility-change": MediaWikiRevisionVisibilityChangeEvent
 }
 

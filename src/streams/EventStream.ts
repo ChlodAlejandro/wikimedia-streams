@@ -14,6 +14,7 @@ import MediaWikiRecentChangeEvent from "./MediaWikiRecentChangeEvent";
 import MediaWikiRevisionCreateEvent from "./MediaWikiRevisionCreateEvent";
 import MediaWikiRevisionScoreEvent from "./MediaWikiRevisionScoreEvent";
 import MediaWikiRevisionVisibilityChangeEvent from "./MediaWikiRevisionVisibilityChangeEvent";
+import MediaWikiRevisionTagsChangeEvent from "./MediaWikiRevisionTagsChangeEvent";
 
 interface WikimediaEventMeta {
 
@@ -66,6 +67,7 @@ type WikimediaEvent =
     | MediaWikiRecentChangeEvent
     | MediaWikiRevisionCreateEvent
     | MediaWikiRevisionScoreEvent
+	| MediaWikiRevisionTagsChangeEvent
     | MediaWikiRevisionVisibilityChangeEvent;
 
 export default WikimediaEvent;
