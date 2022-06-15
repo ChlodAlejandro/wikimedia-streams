@@ -29,7 +29,7 @@
     "homepage": "https://github.com/ChlodAlejandro/wikimedia-streams#readme",
     "devDependencies": {
         "@types/eventsource": "^1.1.8",
-        "@types/jest": "^26.0.24",
+        "@types/jest": "^27.5.1",
         "@types/node": "^16.11.26",
         "jest": "^27.5.1",
         "ts-jest": "^27.1.3",
