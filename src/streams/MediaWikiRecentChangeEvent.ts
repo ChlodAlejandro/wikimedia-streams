@@ -4,8 +4,8 @@
  */
 
 import Comment from "./common/Comment";
-import Log from "./common/Log";
-import {MediaWikiEvent, WikimediaEventBase} from "./EventStream";
+import Log, {hasMediaWikiLog} from "./common/Log";
+import {isWikimediaEvent, WikimediaEventBase} from "./EventStream";
 
 /** Represents a MW RecentChange event. <https://www.mediawiki.org/wiki/Manual:RCFeed> */
 export interface MediaWikiRecentChangeEventBase extends
@@ -40,6 +40,9 @@ export interface MediaWikiRecentChangeEventBase extends
 
     /** $wgCanonicalServer */
     server_url: string;
+
+	/** The hostname section of the server URL */
+	server_name: string;
 
     /** $wgScriptPath */
     server_script_path: string;
@@ -88,7 +91,7 @@ export interface MediaWikiRecentChangeEditEvent extends Omit<MediaWikiRecentChan
 
 export interface MediaWikiRecentChangeCategorizeEvent extends MediaWikiRecentChangeEventBase {
     type: "categorize"
-    parsedComment: undefined;
+    parsedcomment: string;
 }
 
 type MediaWikiRecentChangeEvent =
@@ -98,3 +101,65 @@ type MediaWikiRecentChangeEvent =
     | MediaWikiRecentChangeCategorizeEvent;
 
 export default MediaWikiRecentChangeEvent;
+
+// Not using a TypeScript `is` return type to avoid mistyping the event object before checks.
+function isMediaWikiRecentChangeEventBase(object: any): boolean {
+	return typeof object === "object"
+		&& [
+			"edit", "new", "log", "categorize", "external"
+		].includes(object.type)
+		&& typeof object.title === "string"
+		&& (object.id == null || typeof object.id === "number")
+		&& typeof object.namespace === "number"
+		&& typeof object.timestamp === "number"
+		&& typeof object.user === "string"
+		&& typeof object.bot === "boolean"
+		&& typeof object.server_url === "string"
+		&& typeof object.server_name === "string"
+		&& typeof object.server_script_path === "string"
+		&& typeof object.wiki === "string"
+		&& isWikimediaEvent(object)
+}
+
+export function isMediaWikiRecentChangeLogEvent(object: any): object is MediaWikiRecentChangeLogEvent {
+	return isMediaWikiRecentChangeEventBase(object)
+		&& object.type === "log"
+		&& typeof object.comment === "string"
+		&& typeof object.parsedcomment === "string"
+		&& hasMediaWikiLog(object);
+}
+
+export function isMediaWikiRecentChangeNewEvent(object: any): object is MediaWikiRecentChangeNewEvent {
+	return isMediaWikiRecentChangeEventBase(object)
+		&& object.type === "new"
+		&& typeof object.length === "object"
+		&& typeof object.length.new === "number"
+		&& typeof object.revision === "object"
+		&& typeof object.revision.new === "number"
+		&& typeof object.minor === "boolean"
+		&& typeof object.patrolled === "boolean";
+}
+
+export function isMediaWikiRecentChangeEditEvent(object: any): object is MediaWikiRecentChangeEditEvent {
+	return isMediaWikiRecentChangeEventBase(object)
+		&& object.type === "edit"
+		&& typeof object.length === "object"
+		&& typeof object.length.old === "number"
+		&& typeof object.length.new === "number"
+		&& typeof object.revision === "object"
+		&& typeof object.revision.old === "number"
+		&& typeof object.revision.new === "number";
+}
+
+export function isMediaWikiRecentChangeCategorizeEvent(object: any): object is MediaWikiRecentChangeCategorizeEvent {
+	return isMediaWikiRecentChangeEventBase(object)
+		&& object.type === "categorize"
+		&& typeof object.parsedcomment === "string";
+}
+
+export function isMediaWikiRecentChangeEvent(object: any): object is MediaWikiRecentChangeEvent {
+	return isMediaWikiRecentChangeLogEvent(object)
+		|| isMediaWikiRecentChangeNewEvent(object)
+		|| isMediaWikiRecentChangeEditEvent(object)
+		|| isMediaWikiRecentChangeCategorizeEvent(object);
+}
