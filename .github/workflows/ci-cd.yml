@@ -33,7 +33,7 @@ jobs:
                 with:
                     audit_level: moderate
                     github_token: ${{ secrets.GITHUB_TOKEN }}
-                    create_issues: true
+                    create_issues: false
             -   name: Build
                 run: npm run build --if-present
             -   name: Test
