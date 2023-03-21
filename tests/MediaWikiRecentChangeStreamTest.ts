@@ -1,8 +1,6 @@
-import WikimediaStream from "../src";
+import WikimediaStream from "../src/WikimediaStreams";
 import MediaWikiRecentChangeEvent from "../src/streams/MediaWikiRecentChangeEvent";
 import {version} from "../package.json";
-
-jest.setTimeout(60000);
 
 export function testRecentChange(data : MediaWikiRecentChangeEvent) {
 
