@@ -3,7 +3,6 @@ import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEven
 import { version } from '../package.json';
 
 /**
- *
  * @param data
  */
 export function testRecentChange( data : MediaWikiRecentChangeEvent ) {
