@@ -133,10 +133,13 @@ export interface WikimediaStreamOptions extends EventSourceInitDict {
     /**
      * Whether the stream should automatically be reopened if it closes due to an
      * error or a periodic disconnect (standard for Wikimedia Foundation streams).
+     *
      * @default true
      */
     reopenOnClose?: boolean;
 }
+
+type ErrorEvent = Event & { type: 'error', message: string | undefined };
 
 /*
  * Narrows down EventEmitter.
@@ -147,68 +150,68 @@ export declare interface WikimediaStream {
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
-    once(event: "open" | "close", listener: () => void): this;
-    once(event: "error", listener: (error: MessageEvent<any>) => void): this;
+    once( event: 'open' | 'close', listener: () => void ): this;
+    once( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
     on<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
-    on(event: "open" | "close", listener: () => void): this;
-    on(event: "error", listener: (error: MessageEvent<any>) => void): this;
+    on( event: 'open' | 'close', listener: () => void ): this;
+    on( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
     addListener<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
-    addListener(event: "open" | "close", listener: () => void): this;
-    addListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
+    addListener( event: 'open' | 'close', listener: () => void ): this;
+    addListener( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
     off<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
-    off(event: "open" | "close", listener: () => void): this;
-    off(event: "error", listener: (error: MessageEvent<any>) => void): this;
+    off( event: 'open' | 'close', listener: () => void ): this;
+    off( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
     removeListener<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
-    removeListener(event: "open" | "close", listener: () => void): this;
-    removeListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
+    removeListener( event: 'open' | 'close', listener: () => void ): this;
+    removeListener( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
     removeAllListeners(
-        event?: "open" | "error" | "close" | WikimediaEventStream
+        event?: 'open' | 'error' | 'close' | WikimediaEventStream
     ): this;
 
-    listeners(event: "open" | "error" | "close" | WikimediaEventStream): Function[];
+    listeners( event: 'open' | 'error' | 'close' | WikimediaEventStream ): Function[];
 
-    rawListeners(event: "open" | "error" | "close" | WikimediaEventStream): Function[];
+    rawListeners( event: 'open' | 'error' | 'close' | WikimediaEventStream ): Function[];
 
     emit<T extends keyof WikimediaEventStreamEventTypes>(
         eventName: T,
         data: WikimediaEventStreamEventTypes[T],
         event: MessageEvent
     ): boolean;
-    emit(event: "open" | "close"): this;
-    emit(event: "error", error: MessageEvent<any>): this;
+    emit( event: 'open' | 'close' ): this;
+    emit( event: 'error', error: ErrorEvent ): this;
 
-    listenerCount(event: "open" | "error" | "close" | WikimediaEventStream): number;
+    listenerCount( event: 'open' | 'error' | 'close' | WikimediaEventStream ): number;
 
     prependListener<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
-    prependListener(event: "open" | "close", listener: () => void): this;
-    prependListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
+    prependListener( event: 'open' | 'close', listener: () => void ): this;
+    prependListener( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
     prependOnceListener<T extends keyof WikimediaEventStreamEventTypes>(
         event: T,
         listener: WikimediaStreamEventListener<T>
     ): this;
-    prependOnceListener(event: "open" | "close", listener: () => void): this;
-    prependOnceListener(event: "error", listener: (error: MessageEvent<any>) => void): this;
+    prependOnceListener( event: 'open' | 'close', listener: () => void ): this;
+    prependOnceListener( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
 }
 
@@ -385,16 +388,19 @@ export class WikimediaStream extends EventEmitter {
             this.emit("open");
         });
 
-        this.eventSource.addEventListener("error", (e: MessageEvent<any>) => {
-            this.emit("error", e);
-            // Reopen if error was fatal.
-            if (
-                this.eventSource.readyState !== this.eventSource.OPEN
-                && options.reopenOnClose !== false
-            ) {
-                this.open(options);
-            }
-        });
+		this.eventSource.addEventListener( 'error', ( e ) => {
+			if ( ( e as any ).message !== undefined ) {
+				// This wasn't a natural server disconnect. Emit error.
+				this.emit( 'error', e as any );
+			}
+			// Attempt reopen if error was fatal.
+			if (
+				this.eventSource.readyState !== this.eventSource.OPEN &&
+                options.reopenOnClose !== false
+			) {
+				this.open( options );
+			}
+		} );
 
         this.eventSource.addEventListener("close", () => {
             if (options.reopenOnClose !== false) {
