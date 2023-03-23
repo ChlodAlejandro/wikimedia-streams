@@ -129,6 +129,15 @@ export enum EventSourceState {
 type WikimediaStreamEventListener<T extends keyof WikimediaEventStreamEventTypes> =
     (data: WikimediaEventStreamEventTypes[T], event: MessageEvent) => void;
 
+export interface WikimediaStreamOptions extends EventSourceInitDict {
+    /**
+     * Whether the stream should automatically be reopened if it closes due to an
+     * error or a periodic disconnect (standard for Wikimedia Foundation streams).
+     * @default true
+     */
+    reopenOnClose?: boolean;
+}
+
 /*
  * Narrows down EventEmitter.
  */
@@ -237,6 +246,14 @@ export class WikimediaStream extends EventEmitter {
      * @private
      */
     private openCheckInterval: NodeJS.Timeout;
+    /**
+     * A NodeJS.Timeout which reopens the EventSource every 15 minutes. This ensures
+     * that messages are still being received (with a worst possible lag of 15 minutes)
+     * even if the EventSource disconnects with no error or close event.
+     *
+     * @private
+     */
+    private restartInterval: NodeJS.Timeout;
 
     /**
      * The current status of this stream.
@@ -294,7 +311,7 @@ export class WikimediaStream extends EventEmitter {
      */
     public constructor(
         streams: WikimediaEventStream | WikimediaEventStream[],
-        options: EventSourceInitDict = {}
+        options: WikimediaStreamOptions = {}
     ) {
         super();
 
@@ -322,7 +339,7 @@ export class WikimediaStream extends EventEmitter {
      * @param options
      *   Additional options for the EventSource.
      */
-    public open(options: EventSourceInitDict = {}): void {
+    public open(options: WikimediaStreamOptions = {}): void {
         // If the EventSource is currently open, close it.
         if (this.eventSource && this.eventSource.readyState !== this.eventSource.CLOSED)
             this.close();
@@ -347,6 +364,23 @@ export class WikimediaStream extends EventEmitter {
              options
         );
 
+        this.attachEventListeners(options);
+
+        if (options.reopenOnClose) {
+            // Periodically check if the EventSource is still open, and reconnect if it isn't.
+            this.openCheckInterval = setInterval(() => {
+                if (this.eventSource.readyState === this.eventSource.CLOSED) {
+                    this.open(options);
+                }
+            }, 1e3);
+        }
+        this.restartInterval = setInterval( () => {
+            this.close();
+            this.open(options);
+        }, 60e3 * 15 );
+    }
+
+    attachEventListeners(options: WikimediaStreamOptions) {
         this.eventSource.addEventListener("open", () => {
             this.emit("open");
         });
@@ -354,14 +388,19 @@ export class WikimediaStream extends EventEmitter {
         this.eventSource.addEventListener("error", (e: MessageEvent<any>) => {
             this.emit("error", e);
             // Reopen if error was fatal.
-            if (this.eventSource.readyState !== this.eventSource.OPEN) {
+            if (
+                this.eventSource.readyState !== this.eventSource.OPEN
+                && options.reopenOnClose !== false
+            ) {
                 this.open(options);
             }
         });
 
         this.eventSource.addEventListener("close", () => {
-            // Reopen if connection was closed.
-            this.open(options);
+            if (options.reopenOnClose !== false) {
+                // Reopen if connection was closed.
+                this.open(options);
+            }
         });
 
         this.eventSource.addEventListener("message", async (event: MessageEvent) => {
@@ -378,21 +417,18 @@ export class WikimediaStream extends EventEmitter {
                 }
             }
         });
-
-        // Periodically check if the EventSource is still open, and reconnect if it isn't.
-        this.openCheckInterval = setInterval(() => {
-            if (this.eventSource.readyState === this.eventSource.CLOSED) {
-                this.open(options);
-            }
-        }, 1000);
     }
 
     /**
      * Stop listening to the stream.
      */
     public close(): void {
-        clearInterval(this.openCheckInterval);
-        this.openCheckInterval = null;
+        if (this.openCheckInterval) {
+            clearInterval(this.openCheckInterval);
+            this.openCheckInterval = null;
+        }
+        clearInterval(this.restartInterval);
+        this.restartInterval = null;
 
         this.eventSource.close();
         this.eventSource = null;
