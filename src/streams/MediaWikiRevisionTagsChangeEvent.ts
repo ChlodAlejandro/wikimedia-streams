@@ -3,20 +3,20 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import {isMediaWikiEvent, MediaWikiEvent} from "./EventStream";
-import Page, {hasMediaWikiPage} from "./common/Page";
-import Comment from "./common/Comment";
-import Revision, {hasMediaWikiRevision} from "./common/Revision";
-import {isMediaWikiUser} from "./common/User";
+import { isMediaWikiEvent, MediaWikiEvent } from './EventStream';
+import Page, { hasMediaWikiPage } from './common/Page';
+import Comment from './common/Comment';
+import Revision, { hasMediaWikiRevision } from './common/Revision';
+import { isMediaWikiUser } from './common/User';
 
 /** Represents a MW Revision Tags Change event. */
-export default interface MediaWikiRevisionTagsChangeEvent extends
-    MediaWikiEvent, Page, Comment, Revision {
+export default interface MediaWikiRevisionTagsChangeEvent
+	extends MediaWikiEvent, Page, Comment, Revision {
 
 	/**
 	 * An array of all the tags for this MediaWiki revision.
 	 */
-    tags: string[];
+	tags: string[];
 	/**
 	 * The prior state of this MediaWiki revision. Includes tags that were already
 	 * part of the revision prior to this event.
@@ -30,13 +30,18 @@ export default interface MediaWikiRevisionTagsChangeEvent extends
 
 }
 
-export function isMediaWikiRevisionTagsChangeEvent(object: any): object is MediaWikiRevisionTagsChangeEvent {
-	return typeof object === "object"
-		&& Array.isArray(object.tags)
-		&& typeof object.prior_state === "object"
-		&& Array.isArray(object.prior_state.tags)
-		&& hasMediaWikiPage(object)
-		&& hasMediaWikiRevision(object)
-		&& isMediaWikiUser((object as any).performer)
-		&& isMediaWikiEvent(object);
+/**
+ *
+ * @param object
+ */
+export function isMediaWikiRevisionTagsChangeEvent( object: any ):
+	object is MediaWikiRevisionTagsChangeEvent {
+	return typeof object === 'object' &&
+		Array.isArray( object.tags ) &&
+		typeof object.prior_state === 'object' &&
+		Array.isArray( object.prior_state.tags ) &&
+		hasMediaWikiPage( object ) &&
+		hasMediaWikiRevision( object ) &&
+		isMediaWikiUser( ( object as any ).performer ) &&
+		isMediaWikiEvent( object );
 }

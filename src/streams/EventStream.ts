@@ -3,41 +3,42 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import {WikimediaEventStream} from "../index";
-import EventGateTestEvent from "./EventGateTestEvent";
-import MediaWikiPageDeleteEvent from "./MediaWikiPageDeleteEvent";
-import MediaWikiPageLinksChangeEvent from "./MediaWikiPageLinksChangeEvent";
-import MediaWikiPageMoveEvent from "./MediaWikiPageMoveEvent";
-import MediaWikiPagePropertiesChangeEvent from "./MediaWikiPagePropertiesChangeEvent";
-import MediaWikiPageUndeleteEvent from "./MediaWikiPageUndeleteEvent";
-import MediaWikiRecentChangeEvent from "./MediaWikiRecentChangeEvent";
-import MediaWikiRevisionCreateEvent from "./MediaWikiRevisionCreateEvent";
-import MediaWikiRevisionScoreEvent from "./MediaWikiRevisionScoreEvent";
-import MediaWikiRevisionVisibilityChangeEvent from "./MediaWikiRevisionVisibilityChangeEvent";
-import MediaWikiRevisionTagsChangeEvent from "./MediaWikiRevisionTagsChangeEvent";
+import { WikimediaEventStream } from '../index';
+import EventGateTestEvent from './EventGateTestEvent';
+import MediaWikiPageDeleteEvent from './MediaWikiPageDeleteEvent';
+import MediaWikiPageLinksChangeEvent from './MediaWikiPageLinksChangeEvent';
+import MediaWikiPageMoveEvent from './MediaWikiPageMoveEvent';
+import MediaWikiPagePropertiesChangeEvent from './MediaWikiPagePropertiesChangeEvent';
+import MediaWikiPageUndeleteEvent from './MediaWikiPageUndeleteEvent';
+import MediaWikiRecentChangeEvent from './MediaWikiRecentChangeEvent';
+import MediaWikiRevisionCreateEvent from './MediaWikiRevisionCreateEvent';
+import MediaWikiRevisionScoreEvent from './MediaWikiRevisionScoreEvent';
+import MediaWikiRevisionVisibilityChangeEvent from './MediaWikiRevisionVisibilityChangeEvent';
+import MediaWikiRevisionTagsChangeEvent from './MediaWikiRevisionTagsChangeEvent';
 
 interface WikimediaEventMeta {
 
-    /** Unique URI identifying the event or entity */
-    uri: string;
+	/** Unique URI identifying the event or entity */
+	uri: string;
 
-    /** Unique ID of the request that caused the event */
-    request_id: string;
+	/** Unique ID of the request that caused the event */
+	request_id: string;
 
-    /** Unique ID of this event */
-    id: string;
+	/** Unique ID of this event */
+	id: string;
 
-    /**
-     * UTC event datetime, in ISO-8601 format
-     * @example 2021-07-09T02:50:29Z
-     */
-    dt: string;
+	/**
+	 * UTC event datetime, in ISO-8601 format
+	 *
+	 * @example 2021-07-09T02:50:29Z
+	 */
+	dt: string;
 
-    /** Domain the event or entity pertains to */
-    domain: string;
+	/** Domain the event or entity pertains to */
+	domain: string;
 
-    /** Name of the stream/queue/dataset that this event belongs in */
-    stream: WikimediaEventStream;
+	/** Name of the stream/queue/dataset that this event belongs in */
+	stream: WikimediaEventStream;
 
 	topic: string;
 	partition: number;
@@ -50,27 +51,28 @@ interface WikimediaEventMeta {
  * an event does not have the required meta information, it may be malformed.
  *
  * @param object The object to check.
- * @returns `true` if the object is a WikimediaEventMeta object, `false if otherwise.
+ * @return `true` if the object is a WikimediaEventMeta object, `false if otherwise.
  */
-export function isWikimediaEventMeta(object: any): object is WikimediaEventMeta {
-	return typeof object === "object"
-		&& typeof object.uri === "string"
-		&& typeof object.request_id === "string"
-		&& typeof object.id === "string"
-		&& typeof object.dt === "string"
-		&& typeof object.domain === "string"
-		&& typeof object.stream === "string";
+export function isWikimediaEventMeta( object: any ): object is WikimediaEventMeta {
+	return typeof object === 'object' &&
+		typeof object.uri === 'string' &&
+		typeof object.request_id === 'string' &&
+		typeof object.id === 'string' &&
+		typeof object.dt === 'string' &&
+		typeof object.domain === 'string' &&
+		typeof object.stream === 'string';
 
 }
 
 export interface WikimediaEventBase {
 
-    /**
-     * A URI identifying the JSONSchema for this event. This should match an schema's $id in a schema repository. E.g. /schema/title/1.0.0
-     */
-    "$schema" : string;
+	/**
+	 * A URI identifying the JSONSchema for this event. This should match an schema's $id
+	 * in a schema repository. E.g. /schema/title/1.0.0
+	 */
+	'$schema': string;
 
-    "meta": WikimediaEventMeta;
+	'meta': WikimediaEventMeta;
 
 }
 
@@ -80,15 +82,15 @@ export interface WikimediaEventBase {
  *
  * @param object The object to check
  */
-export function isWikimediaEvent(object: any): object is WikimediaEventBase {
-	return typeof object === "object"
-		&& typeof object.schema === "string"
-		&& isWikimediaEventMeta(object.meta);
+export function isWikimediaEvent( object: any ): object is WikimediaEventBase {
+	return typeof object === 'object' &&
+		typeof object.schema === 'string' &&
+		isWikimediaEventMeta( object.meta );
 }
 
 export interface MediaWikiEvent extends WikimediaEventBase {
-    /** The name of the wiki database this event entity belongs to. */
-    database: string;
+	/** The name of the wiki database this event entity belongs to. */
+	database: string;
 }
 
 /**
@@ -97,24 +99,23 @@ export interface MediaWikiEvent extends WikimediaEventBase {
  *
  * @param object The object to check
  */
-export function isMediaWikiEvent(object: any): object is MediaWikiEvent {
-	return typeof object === "object"
-		&& typeof object.database === "string"
-		&& isWikimediaEvent(object);
+export function isMediaWikiEvent( object: any ): object is MediaWikiEvent {
+	return typeof object === 'object' &&
+		typeof object.database === 'string' &&
+		isWikimediaEvent( object );
 }
 
 type WikimediaEvent =
-    EventGateTestEvent
-    | MediaWikiPageDeleteEvent
-    | MediaWikiPageLinksChangeEvent
-    | MediaWikiPageMoveEvent
-    | MediaWikiPagePropertiesChangeEvent
-    | MediaWikiPageUndeleteEvent
-    | MediaWikiRecentChangeEvent
-    | MediaWikiRevisionCreateEvent
-    | MediaWikiRevisionScoreEvent
+	EventGateTestEvent
+	| MediaWikiPageDeleteEvent
+	| MediaWikiPageLinksChangeEvent
+	| MediaWikiPageMoveEvent
+	| MediaWikiPagePropertiesChangeEvent
+	| MediaWikiPageUndeleteEvent
+	| MediaWikiRecentChangeEvent
+	| MediaWikiRevisionCreateEvent
+	| MediaWikiRevisionScoreEvent
 	| MediaWikiRevisionTagsChangeEvent
-    | MediaWikiRevisionVisibilityChangeEvent;
+	| MediaWikiRevisionVisibilityChangeEvent;
 
 export default WikimediaEvent;
-
