@@ -4,7 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/wikimedia-streams.svg?style=flat-square)](https://www.npmjs.org/package/wikimedia-streams)
 [![npm downloads](https://img.shields.io/npm/dm/wikimedia-streams.svg?style=flat-square)](http://npm-stat.com/charts.html?package=wikimedia-streams)
 
-wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams) in order to serve real-time changes to Wikimedia wikis. This entire library is typed, which makes parameter handling well-documented and defined.
+wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams) in order to serve real-time changes to Wikimedia wikis. This entire library is typed, which makes parameter handling well-documented and defined. As of now, this package only works with Node.js. Browser support is planned in the future.
 
 ## Usage
 
