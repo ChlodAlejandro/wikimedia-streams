@@ -81,6 +81,104 @@ stream.on("revision-create", (data, event) => {
 });
 ```
 
+## Filtering
+
+You can filter a stream using masks. An event must match the provided mask to be accepted.
+Filters are built using the `filter` function, and can only filter one stream type at a time
+to ensure proper typing.
+
+```ts
+const filter = stream.filter("mediawiki.recentchange");
+```
+
+Three filter modes are provided; these mirror the types used by [Pywikibot](https://doc.wikimedia.org/pywikibot/stable/api_ref/pywikibot.comms.html#comms.eventstreams.EventStreams.register_filter):
+* `none` skips the event if it matches the mask. If it skips no event, it proceeds to `all` filters.
+* `all` skips the event if it does not match all `all` filters. If it skips no event, it proceeds to `any` filters.
+* `any` skips the event if it does not match any `any` filters.
+
+```ts
+
+```
+
+Note that you are supposed to chain the filter functions together and in order. Type assistance
+will not be available otherwise. Due to how the types are constructed, compile-time errors are
+emitted to ensure proper use of the code. This is not available in JavaScript, and can lead to
+unexpected behavior if filters are used improperly.
+
+```ts
+const filter = stream.filter("mediawiki.recentchange");
+
+filter.all({ type: "categorize" })
+	.on((event) => {
+		// This will never be called.
+	});
+
+filter.all({ type: "edit" })
+    .on((event) => {
+        // This will never be called.
+    });
+
+// By using the above two, the functions in `on` will never be called, since the event will
+// only pass through the filter if the edit has a type of both "categorize" and "edit", which
+// is impossible.
+
+// This is the correct way to clone filters:
+const filter2 = stream.filter("mediawiki.recentchange");
+filter2.clone().all({ type: "categorize" })
+	.on((event) => {
+		// This will be called.
+	});
+filter2.clone().all({ type: "categorize" })
+	.on((event) => {
+		// This will be called.
+	});
+```
+
+```ts
+stream.filter("mediawiki.recentchange")
+    .all({ wiki: "enwiki" }) 
+    .none({ type: "categorize" }) // This will fail on compile time.
+    .on((event) => {
+		// Though this will correctly provide English Wikipedia new/edit/log events,
+        // types *may* be incorrect.
+    });
+```
+
+Due to limitations in TypeScript, the received type may be too broad compared to the actual values of the types.
+
+### Examples
+1. Get all edits from the English Wikipedia.
+   ```ts
+   stream.filter("mediawiki.recentchange")
+   .all({ wiki: "enwiki" })
+   .all({ type: "edit" })
+   .on((event) => {
+      console.log(`New edit from ${event.user} on "${event.title}"`)
+   });
+   ```
+2. Get all log events from the English Wikipedia.
+   ```ts
+   stream.filter("mediawiki.recentchange")
+   .all({ wiki: "enwiki" })
+   .all({ type: "log" })
+   .on((event) => {
+      console.log(`${event.user} performed ${event.log_type}/${event.log_action} on "${event.title}"`)
+   });
+   ```
+3. Get edits from all wikis with a byte difference of greater than 500.
+   ```ts
+   stream.filter("mediawiki.recentchange")
+   .all({ wiki: "enwiki" })
+   .all({ type: "edit" })
+   .on((event) => {
+      // Byte difference is a computed value. This must take place in manual filter.
+      const byteDiff = event.length.new - event.length.old;
+      if (Math.abs(byteDiff) > 500) {
+         console.log(`${byteDiff > 0 ? `+${byteDiff}` : byteDiff} bytes ${event.user} on "${event.title}"`)
+      }
+   });
+   ```
+
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License");

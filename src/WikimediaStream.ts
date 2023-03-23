@@ -14,6 +14,7 @@ import type MediaWikiRevisionVisibilityChangeEvent
 import type EventGateTestEvent from './streams/EventGateTestEvent';
 import MediaWikiRevisionTagsChangeEvent from './streams/MediaWikiRevisionTagsChangeEvent';
 import packageJson from '../package.json';
+import { WikimediaStreamFilter } from './WikimediaStreamFilter';
 
 /**
  * The list of Wikimedia EventStreams types, excluding aliases (found in
@@ -59,7 +60,7 @@ export const WikimediaEventStreamAliases = <const>{
  * Type definition for each event stream. Respective type declarations for the
  * event stream payloads can be found in their respective files.
  */
-type WikimediaEventStreamEventTypes = {
+export type WikimediaEventStreamEventTypes = {
 	'eventgate-main.test.event': EventGateTestEvent,
 	'test': EventGateTestEvent,
 	'mediawiki.page-create': MediaWikiRevisionCreateEvent,
@@ -129,8 +130,16 @@ export enum EventSourceState {
 /**
  * Sets the type for listeners that are added to the {@link WikimediaStream} EventEmitter.
  */
-type WikimediaStreamEventListener<T extends keyof WikimediaEventStreamEventTypes> =
+export type WikimediaStreamEventListener<T extends keyof WikimediaEventStreamEventTypes> =
 	( data: WikimediaEventStreamEventTypes[T], event: MessageEvent ) => void;
+
+/**
+ * Sets the type for listeners that are added to the {@link WikimediaStream} EventEmitter.
+ */
+export type RawWikimediaStreamEventListener<
+	T extends WikimediaEventStreamEventTypes[keyof WikimediaEventStreamEventTypes]
+> =
+	( data: T, event: MessageEvent ) => void;
 
 export interface WikimediaStreamOptions extends EventSourceInitDict {
 	/**
@@ -142,7 +151,7 @@ export interface WikimediaStreamOptions extends EventSourceInitDict {
 	reopenOnClose?: boolean;
 }
 
-type ErrorEvent = Event & { type: 'error', message: string | undefined };
+export type ErrorEvent = Event & { type: 'error', message: string | undefined };
 
 /*
  * Narrows down EventEmitter.
@@ -484,6 +493,13 @@ export class WikimediaStream extends EventEmitter {
 			...WikimediaEventStreams,
 			...Object.keys( WikimediaEventStreamAliases )
 		];
+	}
+
+	filter<T extends WikimediaEventStream>( eventType: T ):
+		WikimediaStreamFilter<WikimediaEventStreamEventTypes[T], T> {
+		return new WikimediaStreamFilter<WikimediaEventStreamEventTypes[typeof eventType], T>(
+			this, eventType
+		);
 	}
 
 }
