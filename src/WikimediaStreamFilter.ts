@@ -115,9 +115,9 @@ export class WikimediaStreamFilter<
 	 * @param options
 	 */
 	all<V extends DeepPartial<T>>( mask: V, options: FilterOptions = {} ):
-		WikimediaStreamFilter<T & V, U> & { none: never, any: never } {
+		WikimediaStreamFilter<T & V, U> & { none: never } {
 		this.allFilters.push( [ mask, options ] );
-		return this as unknown as WikimediaStreamFilter<T & V, U> & { none: never, any: never };
+		return this as unknown as WikimediaStreamFilter<T & V, U> & { none: never };
 	}
 
 	/**
