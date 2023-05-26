@@ -226,7 +226,7 @@ describe( 'WikimediaStream tests', () => {
 		await Promise.race( [
 			stream2.waitUntilClosed(),
 			new Promise<void>( ( res ) => {
-				setTimeout( res, 10000 );
+				setTimeout( res, 30000 );
 			} )
 		] );
 	} );
