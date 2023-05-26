@@ -15,7 +15,7 @@ export default interface MediaWikiPageDeleteEvent extends MediaWikiEvent, Page, 
 	performer?: User;
 
 	/** Chronology Protector client ID. */
-	chronology_id: string;
+	chronology_id?: string;
 
 	/** The head revision of the page at the time of this event. */
 	rev_id: number;
@@ -34,7 +34,6 @@ export default interface MediaWikiPageDeleteEvent extends MediaWikiEvent, Page, 
  */
 export function isMediaWikiPageDeleteEvent( object: any ): object is MediaWikiPageDeleteEvent {
 	return typeof object === 'object' &&
-		typeof object.chronology_id === 'string' &&
 		typeof object.rev_id === 'number' &&
 		typeof object.rev_count === 'number' &&
 		( !object.comment || hasMediaWikiComment( object ) ) &&

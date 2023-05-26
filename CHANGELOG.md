@@ -1,3 +1,9 @@
+# 1.0.0
+* **BREAKING CHANGE:** Types have been updated to reflect real stream output.
+* `lastEventId` is now a possible stream configuration field.
+* `since` is now a possible stream configuration field.
+* The last event ID can now be retrieved using `WikimediaStream#getLastEventId`.
+
 # 0.4.1
 * **BREAKING CHANGE:** Errors will no longer be emitted for natural stream disconnects (every 15 minutes)
 * **BREAKING CHANGE:** The stream will now automatically reconnect every 15 minutes, regardless if the server disconnects first

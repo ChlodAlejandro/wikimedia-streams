@@ -16,7 +16,7 @@ import MediaWikiRevisionScoreEvent from './MediaWikiRevisionScoreEvent';
 import MediaWikiRevisionVisibilityChangeEvent from './MediaWikiRevisionVisibilityChangeEvent';
 import MediaWikiRevisionTagsChangeEvent from './MediaWikiRevisionTagsChangeEvent';
 
-interface WikimediaEventMeta {
+export interface WikimediaEventMeta {
 
 	/** Unique URI identifying the event or entity */
 	uri: string;
@@ -84,7 +84,7 @@ export interface WikimediaEventBase {
  */
 export function isWikimediaEvent( object: any ): object is WikimediaEventBase {
 	return typeof object === 'object' &&
-		typeof object.schema === 'string' &&
+		typeof object.$schema === 'string' &&
 		isWikimediaEventMeta( object.meta );
 }
 

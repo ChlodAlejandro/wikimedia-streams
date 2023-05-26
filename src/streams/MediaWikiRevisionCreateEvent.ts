@@ -7,7 +7,7 @@ import User, { isMediaWikiUser } from './common/User';
 import { isMediaWikiEvent, MediaWikiEvent } from './EventStream';
 import Page, { hasMediaWikiPage } from './common/Page';
 import Comment, { hasMediaWikiComment } from './common/Comment';
-import Revision, { hasMediaWikiRevision } from './common/Revision';
+import Revision, { hasMediaWikiRevision, hasMediaWikiRevisionSlots } from './common/Revision';
 
 /** Represents a MW Revision Create event. */
 export default interface MediaWikiRevisionCreateEvent
@@ -17,7 +17,7 @@ export default interface MediaWikiRevisionCreateEvent
 	performer?: User;
 
 	/** Chronology Protector client ID. */
-	chronology_id: string;
+	chronology_id?: string;
 
 }
 
@@ -28,10 +28,10 @@ export default interface MediaWikiRevisionCreateEvent
 export function isMediaWikiRevisionCreateEvent( object: any ):
 	object is MediaWikiRevisionCreateEvent {
 	return typeof object === 'object' &&
-		typeof object.chronology_id === 'string' &&
 		( !object.comment || hasMediaWikiComment( object ) ) &&
 		hasMediaWikiPage( object ) &&
 		hasMediaWikiRevision( object ) &&
+		hasMediaWikiRevisionSlots( object ) &&
 		isMediaWikiUser( ( object as any ).performer ) &&
 		isMediaWikiEvent( object );
 }

@@ -71,21 +71,23 @@ export default interface MediaWikiRevisionScoreEvent
 	 * map key and was used to score this revision.
 	 *
 	 * @example
+	 * ```
 	 * {
-	 * "awesomeness": {
-	 * "model_name": "awesomeness",
-	 * "model_version": "1.0.1",
-	 * "prediction": [
-	 * "yes",
-	 * "mostly"
-	 * ],
-	 * "probability": {
-	 * "yes": 0.99,
-	 * "mostly": 0.90,
-	 * "hardly": 0.01
+	 *     "awesomeness": {
+	 *         "model_name": "awesomeness",
+	 *         "model_version": "1.0.1",
+	 *         "prediction": [
+	 *             "yes",
+	 *             "mostly"
+	 *         ],
+	 *         "probability": {
+	 *             "yes": 0.99,
+	 *             "mostly": 0.90,
+	 *             "hardly": 0.01
+	 *         }
+	 *     }
 	 * }
-	 * }
-	 * }
+	 * ```
 	 */
 	scores?: Record<string, ModelScore>;
 
@@ -105,7 +107,6 @@ export function isMediaWikiRevisionScoreEvent( object: any ):
 	object is MediaWikiRevisionScoreEvent {
 	return typeof object === 'object' &&
 		typeof object.rev_id === 'number' &&
-		typeof object.rev_parent_id === 'number' &&
 		typeof object.rev_timestamp === 'string' &&
 		( !object.scores || ( typeof object.scores === 'object' &&
 			Object.values( object.scores ).every( ( v: any ) =>
