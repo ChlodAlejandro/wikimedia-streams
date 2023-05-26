@@ -191,7 +191,10 @@ describe( 'WikimediaStream tests', () => {
 		expect.assertions( 3 );
 		let stream1ReferenceEvent : MediaWikiRecentChangeEvent;
 
-		const stream1 = new WikimediaStream( 'recentchange', { autoStart: false } );
+		const stream1 = new WikimediaStream( 'recentchange', {
+			autoStart: false,
+			since: new Date( Date.now() - ( 12 * 60 * 60 * 1e3 ) ).toISOString()
+		} );
 		stream1.once( 'recentchange', () => {
 			stream1.close();
 		} );
