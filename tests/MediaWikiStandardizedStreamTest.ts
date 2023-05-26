@@ -40,13 +40,12 @@ function generateStream( topic: WikimediaEventStream ): Promise<WikimediaStream>
 		const stream = new WikimediaStream(
 			topic, { autoStart: false }
 		);
-		stream.on( 'open', () => {
-			res( stream );
-		} );
 		stream.open( {
 			since: new Date(
 				Date.now() - ( 365 * 24 * 60 * 60 * 1e3 )
 			).toISOString()
+		} ).then( () => {
+			res( stream );
 		} );
 	} );
 }

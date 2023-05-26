@@ -1,4 +1,5 @@
 # 1.0.0
+* **BREAKING CHANGE:** Node.js v12 support has been dropped. Use v14 or greater to continue using the library.
 * **BREAKING CHANGE:** Types have been updated to reflect real stream output.
 * **BREAKING CHANGE:** `open()` now returns a promise that resolves when the stream has opened.
 * `lastEventId` is now a possible stream configuration field.

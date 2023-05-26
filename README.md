@@ -8,7 +8,7 @@ wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://
 
 ## Usage
 
-**Note for Toolforge users:** This package requires at least Node 12.x, which is not available on the [Toolforge Grid Engine](https://wikitech.wikimedia.org/wiki/Help:Toolforge/Grid). Use the Node 12.x Docker image (`toolforge-node12-sssd-base`) on Kubernetes or [nvm](https://github.com/nvm-sh/nvm).
+**Note for Toolforge users:** This package requires at least Node 14.x, which is not available on the [Toolforge Grid Engine](https://wikitech.wikimedia.org/wiki/Help:Toolforge/Grid). Use the Node 14.x Docker image (`toolforge-node14-sssd-base`) on Kubernetes or [nvm](https://github.com/nvm-sh/nvm).
 
 Create a new WikimediaStream with the following:
 
