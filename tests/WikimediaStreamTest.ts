@@ -70,7 +70,7 @@ describe( 'WikimediaStream tests', () => {
 			} ],
 			autoStart: false
 		} );
-		stream2.once( 'recentchange', ( edit ) => {
+		stream2.on( 'recentchange', ( edit ) => {
 			if ( edit.meta.topic !== referenceEvent.meta.topic ) {
 				// skip events that aren't from the right datacenter
 				return;
