@@ -218,7 +218,9 @@ describe( 'WikimediaStream tests', () => {
 			lastEventId: JSON.parse( referenceLastEventId ),
 			autoStart: false
 		} );
+		console.log( stream1ReferenceEvent.meta.id );
 		stream2.once( 'recentchange', ( edit ) => {
+			console.log( edit.meta.id, '+' );
 			if ( edit.meta.id === stream1ReferenceEvent.meta.id ) {
 				expect( edit ).toEqual( stream1ReferenceEvent );
 				stream2.close();
@@ -226,7 +228,7 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		expect( stream2.getLastEventId() ).toEqual( referenceLastEventId );
 		await stream2.open();
-		await Promise.race( [
+		return Promise.race( [
 			stream2.waitUntilClosed(),
 			new Promise<void>( ( res ) => {
 				setTimeout( res, 30000 );
@@ -239,7 +241,7 @@ describe( 'WikimediaStream tests', () => {
 		stream.on( 'open', () => {
 			stream.close();
 		} );
-		await Promise.race( [
+		return Promise.race( [
 			await stream.waitUntilClosed(),
 			new Promise<void>( ( res, rej ) => {
 				setTimeout( rej, 10000 );
