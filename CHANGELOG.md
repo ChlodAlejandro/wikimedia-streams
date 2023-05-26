@@ -1,5 +1,6 @@
 # 1.0.0
 * **BREAKING CHANGE:** Types have been updated to reflect real stream output.
+* **BREAKING CHANGE:** `open()` now returns a promise that resolves when the stream has opened.
 * `lastEventId` is now a possible stream configuration field.
 * `since` is now a possible stream configuration field.
 * The last event ID can now be retrieved using `WikimediaStream#getLastEventId`.
