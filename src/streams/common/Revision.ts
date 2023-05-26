@@ -50,10 +50,10 @@ export default interface Revision {
 	rev_content_format: string;
 
 	/** Flag indicating whether the revision was a revert. */
-	rev_is_revert: boolean;
+	rev_is_revert?: boolean;
 
 	/** Flag indicating whether the revision changed the content. */
-	rev_content_changed: boolean;
+	rev_content_changed?: boolean;
 
 	/** Details about the revert. */
 	rev_revert_details?: {
@@ -81,9 +81,11 @@ export default interface Revision {
 	/**
 	 * The revision slots attached to this revision.
 	 */
-	rev_slots: Record<string, RevisionSlot> & { main: RevisionSlot };
+	rev_slots?: Record<string, RevisionSlot> & { main: RevisionSlot };
 
 }
+
+type RevisionWithSlots = Revision & Required<Pick<Revision, 'rev_slots'>>;
 
 /**
  * Determines if an object has revision information. Required for some events.
@@ -105,10 +107,11 @@ export function hasMediaWikiRevision( object: any ): object is Revision {
 		typeof object.rev_len === 'number' &&
 		typeof object.rev_minor_edit === 'boolean' &&
 		typeof object.rev_content_model === 'string' &&
-		typeof object.rev_content_format === 'string' &&
-		typeof object.rev_is_revert === 'boolean' &&
-		typeof object.rev_content_changed === 'boolean' &&
-		typeof object.rev_slots === 'object' &&
+		typeof object.rev_content_format === 'string';
+}
+
+export function hasMediaWikiRevisionSlots( object: any ): object is RevisionWithSlots {
+	return typeof object.rev_slots === 'object' &&
 		// Main slot is always supplied.
 		typeof object.rev_slots.main === 'object' &&
 		typeof object.rev_slots.main.rev_slot_content_model === 'string' &&

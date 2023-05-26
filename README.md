@@ -8,7 +8,7 @@ wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://
 
 ## Usage
 
-**Note for Toolforge users:** This package requires at least Node 12.x, which is not available on the [Toolforge Grid Engine](https://wikitech.wikimedia.org/wiki/Help:Toolforge/Grid). Use the Node 12.x Docker image (`toolforge-node12-sssd-base`) on Kubernetes or [nvm](https://github.com/nvm-sh/nvm).
+**Note for Toolforge users:** This package requires at least Node 14.x, which is not available on the [Toolforge Grid Engine](https://wikitech.wikimedia.org/wiki/Help:Toolforge/Grid). Use the Node 14.x Docker image (`toolforge-node14-sssd-base`) on Kubernetes or [nvm](https://github.com/nvm-sh/nvm).
 
 Create a new WikimediaStream with the following:
 
@@ -29,10 +29,10 @@ From here, you can listen to sent events using `.on`.
 
 ```ts
 stream.on("recentchange", (data: MediaWikiRecentChangeEvent, event) => {
-    if (data.wiki === "enwiki") {
-        // Edits from the English Wikipedia
-        console.log(data.title); // Output the page title.
-    }
+	if (data.wiki === "enwiki") {
+		// Edits from the English Wikipedia
+		console.log(data.title); // Output the page title.
+	}
 });
 ```
 
@@ -70,14 +70,14 @@ import WikimediaStream from "wikimedia-streams";
 const stream = new WikimediaStream(["page-create", "revision-create"]);
 
 stream.on("page-create", (data, event) => {
-    if (data.database === "enwiki") {
-        // Page created on the English Wikipedia.
-    }
+	if (data.database === "enwiki") {
+		// Page created on the English Wikipedia.
+	}
 });
 stream.on("revision-create", (data, event) => {
-    if (data.database === "enwiki") {
-        // Page edited on the English Wikipedia.
-    }
+	if (data.database === "enwiki") {
+		// Page edited on the English Wikipedia.
+	}
 });
 ```
 
@@ -91,13 +91,33 @@ to ensure proper typing.
 const filter = stream.filter("mediawiki.recentchange");
 ```
 
-Three filter modes are provided; these mirror the types used by [Pywikibot](https://doc.wikimedia.org/pywikibot/stable/api_ref/pywikibot.comms.html#comms.eventstreams.EventStreams.register_filter):
+Three filter modes are provided; these mirror the types used by [Pywikibot](https://doc.wikimedia.org/pywikibot/stable/api_ref/pywikibot.comms.html#comms.eventstreams.EventStreams.register_filter) for parity:
 * `none` skips the event if it matches the mask. If it skips no event, it proceeds to `all` filters.
 * `all` skips the event if it does not match all `all` filters. If it skips no event, it proceeds to `any` filters.
 * `any` skips the event if it does not match any `any` filters.
 
 ```ts
+const filter1 = stream.filter("mediawiki.recentchange");
+filter1.none({ type: "categorize" })
+	.on((event) => {
+		// Only edits that aren't "categorize" types will be accessible here.
+	});
 
+const filter2 = stream.filter("mediawiki.recentchange");
+filter2
+	.all({ type: "edit" })
+	.all({ wiki: "enwiki" })
+	.on((event) => {
+		// Only edits on the English Wikipedia will be accessible here.
+	});
+
+const filter3 = stream.filter("mediawiki.recentchange");
+filter3
+	.any({ type: "commonswiki" })
+	.any({ wiki: "enwiki" })
+	.on((event) => {
+		// Only changes on the English Wikipedia and Wikimedia Commons will be accessible here.
+	});
 ```
 
 Note that you are supposed to chain the filter functions together and in order. Type assistance
@@ -106,6 +126,8 @@ emitted to ensure proper use of the code. This is not available in JavaScript, a
 unexpected behavior if filters are used improperly.
 
 ```ts
+// This is an example of IMPROPER usage!!!
+
 const filter = stream.filter("mediawiki.recentchange");
 
 filter.all({ type: "categorize" })
@@ -114,9 +136,9 @@ filter.all({ type: "categorize" })
 	});
 
 filter.all({ type: "edit" })
-    .on((event) => {
-        // This will never be called.
-    });
+	.on((event) => {
+		// This will never be called.
+	});
 
 // By using the above two, the functions in `on` will never be called, since the event will
 // only pass through the filter if the edit has a type of both "categorize" and "edit", which
@@ -135,13 +157,15 @@ filter2.clone().all({ type: "categorize" })
 ```
 
 ```ts
+// This is an example of IMPROPER usage!!!
+
 stream.filter("mediawiki.recentchange")
-    .all({ wiki: "enwiki" }) 
-    .none({ type: "categorize" }) // This will fail on compile time.
-    .on((event) => {
+	.all({ wiki: "enwiki" })
+	.none({ type: "categorize" }) // This will fail on compile time.
+	.on((event) => {
 		// Though this will correctly provide English Wikipedia new/edit/log events,
-        // types *may* be incorrect.
-    });
+		// types *may* be incorrect.
+	});
 ```
 
 Due to limitations in TypeScript, the received type may be too broad compared to the actual values of the types.

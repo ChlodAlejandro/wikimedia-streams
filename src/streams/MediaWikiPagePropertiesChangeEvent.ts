@@ -46,6 +46,6 @@ export function isMediaWikiPagePropertiesChangeEvent( object: any ):
 		( !object.added_properties || typeof object.added_properties === 'object' ) &&
 		( !object.removed_properties || typeof object.removed_properties === 'object' ) &&
 		hasMediaWikiPage( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
+		( !( object as any ).performer || isMediaWikiUser( ( object as any ).performer ) ) &&
 		isMediaWikiEvent( object );
 }

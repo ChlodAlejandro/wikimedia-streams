@@ -24,7 +24,7 @@ export default interface MediaWikiPageLinksChangeEvent extends MediaWikiEvent, P
 	performer?: User;
 
 	/** Chronology Protector client ID. */
-	chronology_id: string;
+	chronology_id?: string;
 
 	/** The head revision of the page at the time of this event. */
 	rev_id: number;
@@ -55,7 +55,6 @@ export default interface MediaWikiPageLinksChangeEvent extends MediaWikiEvent, P
 export function isMediaWikiPageLinksChangeEvent( object: any ):
 	object is MediaWikiPageLinksChangeEvent {
 	return typeof object === 'object' &&
-		typeof object.chronology_id === 'string' &&
 		typeof object.rev_id === 'number' &&
 		( !object.added_links || ( Array.isArray( object.added_links ) &&
 			object.added_links.every( ( v: any ) =>

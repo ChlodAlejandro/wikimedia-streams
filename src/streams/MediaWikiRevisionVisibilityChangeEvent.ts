@@ -30,7 +30,7 @@ export default interface MediaWikiRevisionVisibilityChangeEvent
 	performer?: User;
 
 	/** Chronology Protector client ID. */
-	chronology_id: string;
+	chronology_id?: string;
 
 	/** The visibility state of this revision. */
 	visibility: Visibility;
@@ -56,7 +56,6 @@ export default interface MediaWikiRevisionVisibilityChangeEvent
 export function isMediaWikiRevisionVisibilityChangeEvent( object: any ):
 	object is MediaWikiRevisionVisibilityChangeEvent {
 	return typeof object === 'object' &&
-		typeof object.chronology_id === 'string' &&
 		typeof object.visibility === 'object' &&
 		typeof object.visibility.text === 'boolean' &&
 		typeof object.visibility.user === 'boolean' &&

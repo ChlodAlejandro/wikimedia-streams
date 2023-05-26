@@ -1,49 +1,15 @@
 import WikimediaStream from '../src';
 import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEvent';
 import { version } from '../package.json';
+import { testComment, testWikimediaEvent } from './common/CommonTests';
 
 /**
  * @param data
  */
 export function testRecentChange( data : MediaWikiRecentChangeEvent ) {
 
-	/*
-     * WikimediaEventBase
-     */
-
-	// Type checks
-	expect( typeof data.$schema ).toBe( 'string' );
-	expect( typeof data.meta ).toBe( 'object' );
-	expect( typeof data.meta.dt ).toBe( 'string' );
-	expect( typeof data.meta.stream ).toBe( 'string' );
-	if ( data.meta.uri ) {
-		expect( typeof data.meta.uri ).toBe( 'string' );
-	}
-	if ( data.meta.request_id ) {
-		expect( typeof data.meta.request_id ).toBe( 'string' );
-	}
-	if ( data.meta.id ) {
-		expect( typeof data.meta.id ).toBe( 'string' );
-	}
-	if ( data.meta.domain ) {
-		expect( typeof data.meta.domain ).toBe( 'string' );
-	}
-
-	// Value checks
-	expect( new Date( data.meta.dt ).getTime() ).not.toBeNaN();
-	expect( WikimediaStream.isSpecificWikimediaStream( data.meta.stream ) ).toBe( true );
-
-	/*
-     * Comment
-     */
-	expect( typeof data.comment ).toBe( 'string' );
-	if ( data.parsedcomment ) {
-		expect( typeof data.parsedcomment ).toBe( 'string' );
-	}
-
-	/*
-     * MediaWikiRecentChangeEventBase
-     */
+	testWikimediaEvent( data );
+	testComment( data );
 
 	// Type checks
 	expect( [ 'edit', 'new', 'log', 'categorize', 'external' ] ).toContain( data.type );
@@ -113,7 +79,7 @@ beforeAll( ( done ) => {
 } );
 
 let done = false;
-test( 'MediaWiki Recent Changes Stream test', ( doneFn ) => {
+test( 'mediawiki.recentchange', ( doneFn ) => {
 	const status = {};
 
 	/**

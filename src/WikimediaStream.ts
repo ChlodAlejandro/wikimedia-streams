@@ -141,6 +141,29 @@ export type RawWikimediaStreamEventListener<
 > =
 	( data: T, event: MessageEvent ) => void;
 
+export type WikimediaStreamLastEventID = {
+	/**
+	 * The Kafka topic of the stream. This usually includes the datacenter and the
+	 * stream topic (e.g. `eqiad.mediawiki.recentchange`).
+	 */
+	topic: string;
+	/**
+	 * The Kafka partition of the stream.
+	 */
+	partition: number;
+} & ( {
+	/**
+	 * The timestamp to begin enumerating from. This should be a JavaScript-like
+	 * timestamp (millisecond-based).
+	 */
+	timestamp: number;
+} | {
+	/**
+	 * The event offset to begin enumerating from.
+	 */
+	offset: number;
+} );
+
 export interface WikimediaStreamOptions extends EventSourceInitDict {
 	/**
 	 * Whether the stream should automatically be reopened if it closes due to an
@@ -149,6 +172,34 @@ export interface WikimediaStreamOptions extends EventSourceInitDict {
 	 * @default true
 	 */
 	reopenOnClose?: boolean;
+	/**
+	 * Specifies the Kafka topics, partitions and offsets from which to begin
+	 * streaming. You may not specify topics that are not configured to be part
+	 * of this stream endpoint.
+	 *
+	 * @example `[{topic: datacenter1.topic, partition: 0, offset: 12345}, ...]`
+	 */
+	lastEventId?: WikimediaStreamLastEventID[];
+	/**
+	 * If given, this timestamp will be used as the historical starting position
+	 * in each the requested streams. since should either be an integer UTC
+	 * milliseconds unix epoch timestamp, or a string timestamp parseable by
+	 * `Date.parse()`. If the timestamp given does not have any corresponding offsets,
+	 * it will be ignored, and the data will begin streaming from the latest position
+	 * in the stream. This parameter is ignored if `Last-Event-ID` is set with
+	 * offsets (or timestamps) for individual topic partition assignments, e.g.
+	 * when resuming after a disconnect.
+	 *
+	 * NOTE: Historical timestamp assignment is not supported indefinitely. Depending
+	 * on backend stream configuration, will likely be only one or a few weeks.
+	 */
+	since?: string;
+	/**
+	 * Whether to start after instantiation or not.
+	 *
+	 * @default true
+	 */
+	autoStart?: boolean;
 }
 
 export type ErrorEvent = Event & { type: 'error', message: string | undefined };
@@ -335,6 +386,8 @@ export class WikimediaStream extends EventEmitter {
 		return WikimediaEventStreamAliases[ stream ] == null;
 	}
 
+	private readonly startingOptions: WikimediaStreamOptions;
+
 	/**
 	 * Creates a new Wikimedia RecentChanges listener. This will automatically start the
 	 * stream upon construction; you do not need to call {@link WikimediaStream#open} after
@@ -351,6 +404,7 @@ export class WikimediaStream extends EventEmitter {
 		options: WikimediaStreamOptions = {}
 	) {
 		super();
+		this.startingOptions = options;
 
 		// Convert stream ID to array if not array.
 		if ( !Array.isArray( streams ) ) {
@@ -368,8 +422,15 @@ export class WikimediaStream extends EventEmitter {
 		}
 		this.streams = specificStreams;
 
+		if ( options.lastEventId ) {
+			this.lastEventId = JSON.stringify( options.lastEventId );
+		}
+
 		// Open this stream.
-		this.open( options );
+		if ( options.autoStart ?? true ) {
+			// noinspection JSIgnoredPromiseFromCall
+			this.open();
+		}
 	}
 
 	/**
@@ -377,31 +438,45 @@ export class WikimediaStream extends EventEmitter {
 	 *
 	 * @param options
 	 *   Additional options for the EventSource.
+	 * @return A Promise that resolves once the stream is open.
 	 */
-	public open( options: WikimediaStreamOptions = {} ): void {
+	public async open(
+		options: Omit<WikimediaStreamOptions, 'autoStart'> = this.startingOptions
+	): Promise<void> {
 		// If the EventSource is currently open, close it.
 		if ( this.eventSource && this.eventSource.readyState !== this.eventSource.CLOSED ) {
 			this.close();
 		}
 
-		options.headers ??= {};
+		const headers = Object.assign( {}, options.headers ?? {} );
 
 		// Send Last-Event-ID to pick up from cancels, overriding the
 		// Last-Event-ID header provided in options.
-		if ( this.lastEventId != null ) {
-			options.headers[ 'Last-Event-ID' ] = this.lastEventId;
-		}
+		headers[ 'Last-Event-ID' ] = this.lastEventId ??
+			( options.lastEventId ?
+				JSON.stringify( options.lastEventId ) :
+				options.headers?.[ 'Last-Event-ID' ] );
 		// Send generic User-Agent when one has not been provided.
 		if (
-			Object.keys( options.headers )
+			Object.keys( headers )
 				.some( ( header ) => header.toLowerCase() === 'user-agent' ) === false
 		) {
-			options.headers[ 'User-Agent' ] = `wikimedia-streams/${WikimediaStream.VERSION}`;
+			headers[ 'User-Agent' ] = `wikimedia-streams/${WikimediaStream.VERSION}`;
+		}
+
+		const url = new URL( `https://stream.wikimedia.org/v2/stream/${this.streams.join( ',' )}` );
+		if ( options.since ) {
+			url.searchParams.append( 'since', options.since );
 		}
 
 		this.eventSource = new EventSource(
-			`https://stream.wikimedia.org/v2/stream/${this.streams.join( ',' )}`,
-			options
+			url.toString(), {
+				headers,
+				https: options.https,
+				proxy: options.proxy,
+				rejectUnauthorized: options.rejectUnauthorized,
+				withCredentials: options.withCredentials
+			}
 		);
 
 		this.attachEventListeners( options );
@@ -409,7 +484,10 @@ export class WikimediaStream extends EventEmitter {
 		if ( options.reopenOnClose ) {
 			// Periodically check if the EventSource is still open, and reconnect if it isn't.
 			this.openCheckInterval = setInterval( () => {
-				if ( this.eventSource.readyState === this.eventSource.CLOSED ) {
+				if (
+					!this.eventSource ||
+					this.eventSource.readyState === this.eventSource.CLOSED
+				) {
 					this.open( options );
 				}
 			}, 1e3 );
@@ -418,6 +496,27 @@ export class WikimediaStream extends EventEmitter {
 			this.close();
 			this.open( options );
 		}, 60e3 * 15 );
+
+		return new Promise( ( res ) => {
+			this.once( 'open', res );
+		} );
+	}
+
+	/**
+	 * Stop listening to the stream.
+	 */
+	public close(): void {
+		if ( this.openCheckInterval ) {
+			clearInterval( this.openCheckInterval );
+			this.openCheckInterval = null;
+		}
+		clearInterval( this.restartInterval );
+		this.restartInterval = null;
+
+		this.eventSource?.close();
+		this.eventSource = null;
+
+		this.emit( 'close' );
 	}
 
 	/**
@@ -439,6 +538,7 @@ export class WikimediaStream extends EventEmitter {
 				this.eventSource.readyState !== this.eventSource.OPEN &&
 				options.reopenOnClose !== false
 			) {
+				// noinspection JSIgnoredPromiseFromCall
 				this.open( options );
 			}
 		} );
@@ -446,6 +546,7 @@ export class WikimediaStream extends EventEmitter {
 		this.eventSource.addEventListener( 'close', () => {
 			if ( options.reopenOnClose !== false ) {
 				// Reopen if connection was closed.
+				// noinspection JSIgnoredPromiseFromCall
 				this.open( options );
 			}
 		} );
@@ -467,22 +568,6 @@ export class WikimediaStream extends EventEmitter {
 	}
 
 	/**
-	 * Stop listening to the stream.
-	 */
-	public close(): void {
-		if ( this.openCheckInterval ) {
-			clearInterval( this.openCheckInterval );
-			this.openCheckInterval = null;
-		}
-		clearInterval( this.restartInterval );
-		this.restartInterval = null;
-
-		this.eventSource.close();
-		this.eventSource = null;
-		this.emit( 'close' );
-	}
-
-	/**
 	 *
 	 */
 	eventNames(): ( 'open' | 'error' | 'close' | WikimediaEventStream )[] {
@@ -500,6 +585,26 @@ export class WikimediaStream extends EventEmitter {
 		return new WikimediaStreamFilter<WikimediaEventStreamEventTypes[typeof eventType], T>(
 			this, eventType
 		);
+	}
+
+	/**
+	 * Get the last event ID.
+	 */
+	getLastEventId(): string | null {
+		return this.lastEventId;
+	}
+
+	/**
+	 * Returns a promise that resolves when the stream is closed.
+	 */
+	waitUntilClosed(): Promise<void> {
+		// Already closed.
+		if ( this.eventSource == null ) {
+			return Promise.resolve();
+		}
+		return new Promise( res => {
+			this.once( 'close', res );
+		} );
 	}
 
 }

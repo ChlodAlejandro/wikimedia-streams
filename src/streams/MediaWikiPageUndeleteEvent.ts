@@ -15,7 +15,7 @@ export default interface MediaWikiPageUndeleteEvent extends MediaWikiEvent, Page
 	performer?: User;
 
 	/** Chronology Protector client ID. */
-	chronology_id: string;
+	chronology_id?: string;
 
 	/** The head revision of the page at the time of this event. */
 	rev_id: number;
@@ -30,7 +30,7 @@ export default interface MediaWikiPageUndeleteEvent extends MediaWikiEvent, Page
 	 * unless the page_id is no longer the same as the page_id it had
 	 * before it was deleted.
 	 */
-	prior_state: {
+	prior_state?: {
 
 		/** The page ID before this restore as it was in the archive table. */
 		page_id: number;
@@ -45,7 +45,6 @@ export default interface MediaWikiPageUndeleteEvent extends MediaWikiEvent, Page
  */
 export function isMediaWikiPageUndeleteEvent( object: any ): object is MediaWikiPageUndeleteEvent {
 	return typeof object === 'object' &&
-		typeof object.chronology_id === 'string' &&
 		typeof object.rev_id === 'number' &&
 		typeof object.prior_state === 'object' &&
 		typeof object.prior_state.page_id === 'number' &&
