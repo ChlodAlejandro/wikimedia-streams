@@ -6,10 +6,6 @@ import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEven
 
 describe( 'WikimediaStream tests', () => {
 
-	beforeEach( ( doneFn ) => {
-		setTimeout( doneFn, 2000 );
-	} );
-
 	test( 'start stream from canonical ID (mediawiki.recentchange)', () => {
 		return new Promise<void>( ( res, rej ) => {
 			const stream = new WikimediaStream( 'mediawiki.recentchange' );
