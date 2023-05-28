@@ -214,13 +214,11 @@ describe( 'WikimediaStream tests', () => {
 			lastEventId: JSON.parse( referenceLastEventId ),
 			autoStart: false
 		} );
-		console.log( stream1ReferenceEvent.meta.id );
+		console.log( JSON.stringify( stream1ReferenceEvent.meta ) );
 		stream2.once( 'recentchange', ( edit ) => {
-			console.log( edit.meta.id, '+' );
-			if ( edit.meta.id === stream1ReferenceEvent.meta.id ) {
-				expect( edit ).toEqual( stream1ReferenceEvent );
-				stream2.close();
-			}
+			console.log( JSON.stringify( edit.meta ), '+' );
+			expect( edit ).toEqual( stream1ReferenceEvent );
+			stream2.close();
 		} );
 		expect( stream2.getLastEventId() ).toEqual( referenceLastEventId );
 		await stream2.open();
@@ -233,16 +231,18 @@ describe( 'WikimediaStream tests', () => {
 	} );
 
 	test( 'fn waitUntilClosed(): waits until closed', async () => {
+		expect.hasAssertions();
 		const stream = new WikimediaStream( 'recentchange' );
 		stream.on( 'open', () => {
 			stream.close();
 		} );
-		return Promise.race( [
+		await Promise.race( [
 			await stream.waitUntilClosed(),
-			new Promise<void>( ( res, rej ) => {
-				setTimeout( rej, 10000 );
+			new Promise<void>( ( res ) => {
+				setTimeout( res, 10000 );
 			} )
 		] );
+		expect( stream.eventSource ).toBeNull();
 	} );
 
 	test( 'fn waitUntilClosed(): returns immediately if already closed', async () => {
