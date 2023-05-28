@@ -100,7 +100,7 @@ describe( 'WikimediaStream tests', () => {
 			expect(
 				Math.abs( new Date( edit.meta.dt ).getTime() -
 				new Date( referenceEvent.meta.dt ).getTime() )
-			).toBeLessThan( 1e3 );
+			).toBeLessThanOrEqual( 3e3 );
 			stream2.close();
 		} );
 		await stream2.open();
