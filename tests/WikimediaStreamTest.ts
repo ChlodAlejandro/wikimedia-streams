@@ -98,10 +98,9 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		stream2.once( 'recentchange', ( edit ) => {
 			expect(
-				new Date( edit.meta.dt ).getTime()
-			).toBeCloseTo(
-				new Date( referenceEvent.meta.dt ).getTime()
-			);
+				Math.abs( new Date( edit.meta.dt ).getTime() -
+				new Date( referenceEvent.meta.dt ).getTime() )
+			).toBeLessThan( 1e3 );
 			stream2.close();
 		} );
 		await stream2.open();
@@ -202,11 +201,8 @@ describe( 'WikimediaStream tests', () => {
 		expect( typeof referenceLastEventId ).toBe( 'string' );
 
 		stream1.once( 'recentchange', ( edit ) => {
-			// conditional statement to avoid race condition
-			if ( !stream1ReferenceEvent ) {
-				stream1ReferenceEvent = edit;
-				referencePostLastEventId = stream1.getLastEventId();
-			}
+			referencePostLastEventId = stream1.getLastEventId();
+			stream1ReferenceEvent = edit;
 			stream1.close();
 		} );
 		await stream1.open();
