@@ -212,16 +212,18 @@ describe( 'WikimediaStream tests', () => {
 			lastEventId: JSON.parse( referenceLastEventId ),
 			autoStart: false
 		} );
-		console.log( JSON.stringify( stream1ReferenceEvent.meta ) );
+		console.log( 1, JSON.stringify( stream1ReferenceEvent.meta ) );
 		stream2.once( 'recentchange', ( edit ) => {
-			console.log( JSON.stringify( edit.meta ), '+' );
+			console.log( 4, JSON.stringify( edit.meta ), '+' );
+			console.log( 5, JSON.stringify( stream1ReferenceEvent ) );
+			console.log( 6, JSON.stringify( edit ), '+' );
 			expect( stream2.getLastEventId() ).toEqual( referencePostLastEventId );
 			expect( edit ).toEqual( stream1ReferenceEvent );
 			stream2.close();
 		} );
 		// getLastEventId() at this point should still return the reference ID.
-		console.log( referenceLastEventId );
-		console.log( stream2.getLastEventId(), '+' );
+		console.log( 2, referenceLastEventId );
+		console.log( 3, stream2.getLastEventId(), '+' );
 		expect( stream2.getLastEventId() ).toEqual( referenceLastEventId );
 		await stream2.open();
 		return Promise.race( [
