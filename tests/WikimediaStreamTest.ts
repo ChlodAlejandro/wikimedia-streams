@@ -70,7 +70,7 @@ describe( 'WikimediaStream tests', () => {
 			} ],
 			autoStart: false
 		} );
-		stream2.once( 'recentchange', ( edit ) => {
+		stream2.on( 'recentchange', ( edit ) => {
 			if ( edit.meta.topic !== referenceEvent.meta.topic ) {
 				// skip events that aren't from the right datacenter
 				return;
@@ -102,8 +102,10 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		stream2.once( 'recentchange', ( edit ) => {
 			expect(
-				Math.abs( new Date( edit.meta.dt ).getTime() - new Date( referenceEvent.meta.dt ).getTime() )
-			).toBeLessThan( 3e3 );
+				new Date( edit.meta.dt ).getTime()
+			).toBeCloseTo(
+				new Date( referenceEvent.meta.dt ).getTime()
+			);
 			stream2.close();
 		} );
 		await stream2.open();
@@ -218,13 +220,11 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		console.log( stream1ReferenceEvent.meta.id );
 		stream2.once( 'recentchange', ( edit ) => {
-			// Repeated testing has proven that picking up from the exact event is
-			// nearly impossible. We'll do a close check instead.
 			console.log( edit.meta.id, '+' );
-			expect(
-				Math.abs( new Date( edit.meta.dt ).getTime() - new Date( stream1ReferenceEvent.meta.dt ).getTime() )
-			).toBeLessThan( 3e3 );
-			stream2.close();
+			if ( edit.meta.id === stream1ReferenceEvent.meta.id ) {
+				expect( edit ).toEqual( stream1ReferenceEvent );
+				stream2.close();
+			}
 		} );
 		expect( stream2.getLastEventId() ).toEqual( referenceLastEventId );
 		await stream2.open();
