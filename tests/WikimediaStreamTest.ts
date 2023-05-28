@@ -184,7 +184,7 @@ describe( 'WikimediaStream tests', () => {
 	} );
 
 	test( 'fn getLastEventId(): stream is recoverable from last event ID', async () => {
-		expect.assertions( 3 );
+		expect.assertions( 4 );
 		let stream1ReferenceEvent : MediaWikiRecentChangeEvent;
 
 		const stream1 = new WikimediaStream( 'recentchange', {
@@ -198,12 +198,14 @@ describe( 'WikimediaStream tests', () => {
 		await stream1.waitUntilClosed();
 
 		const referenceLastEventId = stream1.getLastEventId();
+		let referencePostLastEventId : string;
 		expect( typeof referenceLastEventId ).toBe( 'string' );
 
 		stream1.once( 'recentchange', ( edit ) => {
 			// conditional statement to avoid race condition
 			if ( !stream1ReferenceEvent ) {
 				stream1ReferenceEvent = edit;
+				referencePostLastEventId = stream1.getLastEventId();
 			}
 			stream1.close();
 		} );
@@ -217,6 +219,7 @@ describe( 'WikimediaStream tests', () => {
 		console.log( JSON.stringify( stream1ReferenceEvent.meta ) );
 		stream2.once( 'recentchange', ( edit ) => {
 			console.log( JSON.stringify( edit.meta ), '+' );
+			expect( stream2.getLastEventId() ).toEqual( referencePostLastEventId );
 			expect( edit ).toEqual( stream1ReferenceEvent );
 			stream2.close();
 		} );
