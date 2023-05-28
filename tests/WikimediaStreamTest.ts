@@ -219,6 +219,9 @@ describe( 'WikimediaStream tests', () => {
 			expect( edit ).toEqual( stream1ReferenceEvent );
 			stream2.close();
 		} );
+		// getLastEventId() at this point should still return the reference ID.
+		console.log( referenceLastEventId );
+		console.log( stream2.getLastEventId(), '+' );
 		expect( stream2.getLastEventId() ).toEqual( referenceLastEventId );
 		await stream2.open();
 		return Promise.race( [
