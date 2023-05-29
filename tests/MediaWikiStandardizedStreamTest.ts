@@ -1,6 +1,4 @@
-import WikimediaStream from '../src';
-import { version } from '../package.json';
-import { WikimediaEventStream } from '../src/WikimediaStream';
+import WikimediaStream, { WikimediaEventStream } from '../src';
 import {
 	isMediaWikiEvent,
 	isWikimediaEvent,
@@ -28,7 +26,12 @@ import {
 } from '../src/streams/MediaWikiRevisionTagsChangeEvent';
 
 beforeAll( () => {
-	expect( WikimediaStream.VERSION ).toBe( version );
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	expect( WikimediaStream.VERSION ).toBe( require( '../package.json' ).version );
+} );
+
+beforeEach( ( doneFn ) => {
+	setTimeout( doneFn, 1000 );
 } );
 
 function generateStream( topic: WikimediaEventStream ): Promise<WikimediaStream> {

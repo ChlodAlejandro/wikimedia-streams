@@ -13,7 +13,6 @@ import type MediaWikiRevisionVisibilityChangeEvent
 	from './streams/MediaWikiRevisionVisibilityChangeEvent';
 import type EventGateTestEvent from './streams/EventGateTestEvent';
 import MediaWikiRevisionTagsChangeEvent from './streams/MediaWikiRevisionTagsChangeEvent';
-import packageJson from '../package.json';
 import { WikimediaStreamFilter } from './WikimediaStreamFilter';
 
 /**
@@ -365,7 +364,7 @@ export class WikimediaStream extends EventEmitter {
 	/**
 	 * The version of this package. Used for the default `User-Agent` header.
 	 */
-	static readonly VERSION = packageJson.version;
+	static readonly VERSION = '1.0.0';
 
 	/**
 	 * Checks if a given string is a valid {@link WikimediaEventStream}.
