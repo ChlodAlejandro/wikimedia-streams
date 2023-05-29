@@ -172,36 +172,36 @@ Due to limitations in TypeScript, the received type may be too broad compared to
 
 ### Examples
 1. Get all edits from the English Wikipedia.
-   ```ts
-   stream.filter("mediawiki.recentchange")
-   .all({ wiki: "enwiki" })
-   .all({ type: "edit" })
-   .on((event) => {
-      console.log(`New edit from ${event.user} on "${event.title}"`)
-   });
-   ```
+	```ts
+	stream.filter("mediawiki.recentchange")
+	.all({ wiki: "enwiki" })
+	.all({ type: "edit" })
+	.on((event) => {
+		console.log(`New edit from ${event.user} on "${event.title}"`)
+	});
+	```
 2. Get all log events from the English Wikipedia.
-   ```ts
-   stream.filter("mediawiki.recentchange")
-   .all({ wiki: "enwiki" })
-   .all({ type: "log" })
-   .on((event) => {
-      console.log(`${event.user} performed ${event.log_type}/${event.log_action} on "${event.title}"`)
-   });
-   ```
+	```ts
+	stream.filter("mediawiki.recentchange")
+	.all({ wiki: "enwiki" })
+	.all({ type: "log" })
+	.on((event) => {
+		console.log(`${event.user} performed ${event.log_type}/${event.log_action} on "${event.title}"`)
+	});
+	```
 3. Get edits from all wikis with a byte difference of greater than 500.
-   ```ts
-   stream.filter("mediawiki.recentchange")
-   .all({ wiki: "enwiki" })
-   .all({ type: "edit" })
-   .on((event) => {
-      // Byte difference is a computed value. This must take place in manual filter.
-      const byteDiff = event.length.new - event.length.old;
-      if (Math.abs(byteDiff) > 500) {
-         console.log(`${byteDiff > 0 ? `+${byteDiff}` : byteDiff} bytes ${event.user} on "${event.title}"`)
-      }
-   });
-   ```
+	```ts
+	stream.filter("mediawiki.recentchange")
+	.all({ wiki: "enwiki" })
+	.all({ type: "edit" })
+	.on((event) => {
+		// Byte difference is a computed value. This must take place in manual filter.
+		const byteDiff = event.length.new - event.length.old;
+		if (Math.abs(byteDiff) > 500) {
+			console.log(`${byteDiff > 0 ? `+${byteDiff}` : byteDiff} bytes ${event.user} on "${event.title}"`)
+		}
+	});
+	```
 
 ## License
 
@@ -215,7 +215,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Type documentation is partially derived from https://stream.wikimedia.org/?doc, which indicates that the documentation is under the aforementioned license as well. As much as I'd like to MIT-license this script, this limitation prevents it.
+Type documentation is partially derived from https://stream.wikimedia.org/?doc, also licensed under the Apache License, Version 2.0.
 
 ## Disclaimer
 You are expected to follow the Wikimedia Foundation [Terms of Use](https://foundation.wikimedia.org/wiki/Terms_of_Use) when accessing EventStreams. The package developer(s) are not liable for any damage caused by you using this package.

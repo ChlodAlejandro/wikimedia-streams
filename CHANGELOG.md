@@ -1,3 +1,6 @@
+# 1.0.1
+* Minor cleanup and documentation fixes.
+
 # 1.0.0
 * **BREAKING CHANGE:** Node.js v12 support has been dropped. Use v14 or greater to continue using the library.
 * **BREAKING CHANGE:** Types have been updated to reflect real stream output.
