@@ -1,14 +1,10 @@
 import WikimediaStream, {
 	WikimediaEventStreamAliases,
-	WikimediaEventStreams
+	WikimediaEventStreams, WikimediaStreamLastEventID
 } from '../src/WikimediaStream';
 import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEvent';
 
 describe( 'WikimediaStream tests', () => {
-
-	beforeEach( ( doneFn ) => {
-		setTimeout( doneFn, 2000 );
-	} );
 
 	test( 'start stream from canonical ID (mediawiki.recentchange)', () => {
 		return new Promise<void>( ( res, rej ) => {
@@ -70,7 +66,7 @@ describe( 'WikimediaStream tests', () => {
 			} ],
 			autoStart: false
 		} );
-		stream2.once( 'recentchange', ( edit ) => {
+		stream2.on( 'recentchange', ( edit ) => {
 			if ( edit.meta.topic !== referenceEvent.meta.topic ) {
 				// skip events that aren't from the right datacenter
 				return;
@@ -102,12 +98,86 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		stream2.once( 'recentchange', ( edit ) => {
 			expect(
-				Math.abs( new Date( edit.meta.dt ).getTime() - new Date( referenceEvent.meta.dt ).getTime() )
-			).toBeLessThan( 3e3 );
+				Math.abs( new Date( edit.meta.dt ).getTime() -
+				new Date( referenceEvent.meta.dt ).getTime() )
+			).toBeLessThanOrEqual( 3e3 );
 			stream2.close();
 		} );
 		await stream2.open();
 		await stream2.waitUntilClosed();
+	} );
+
+	test( 'get lastEventId: lastEventId is automatically saved', async () => {
+		const stream = new WikimediaStream( 'recentchange' );
+		stream.on( 'recentchange', () => {
+			stream.close();
+		} );
+		await stream.waitUntilClosed();
+		const lid = stream.lastEventId;
+		expect( typeof lid ).toBe( 'object' );
+
+		expect( lid ).toBeInstanceOf( Array );
+		for ( const item of lid ) {
+			expect( typeof item.topic ).toEqual( 'string' );
+			expect( typeof item.partition ).toEqual( 'number' );
+			if ( item.timestamp ) {
+				expect( typeof item.timestamp ).toEqual( 'number' );
+			}
+			if ( item.offset ) {
+				expect( typeof item.offset ).toEqual( 'number' );
+			}
+
+			expect( item.topic ).toMatch( /^[^.]+\.mediawiki\.recentchange$/ );
+		}
+	} );
+
+	test( 'get lastEventId: stream is recoverable from last event ID', async () => {
+		// Due to the way KafkaSSE works, we can't actually expect that the next event
+		// will always be the same. However, we can expect that their timestamps will
+		// be very close to each other. Since this is `recentchanges`, which normally
+		// receives high throughput, we'll check if the received event is within 3 seconds
+		// of the event we stopped receiving data from.
+		expect.assertions( 3 );
+		let referenceEvent : MediaWikiRecentChangeEvent;
+		let referenceLastEventId : WikimediaStreamLastEventID[];
+
+		const stream1 = new WikimediaStream( 'recentchange', {
+			autoStart: false
+		} );
+		stream1.once( 'recentchange', ( data ) => {
+			referenceEvent = data;
+			referenceLastEventId = stream1.lastEventId;
+			stream1.close();
+		} );
+		await stream1.open();
+		await stream1.waitUntilClosed();
+
+		expect( typeof referenceLastEventId ).toBe( 'object' );
+
+		await new Promise( ( res ) => setTimeout( res, 3e3 ) );
+
+		const stream2 = new WikimediaStream( 'recentchange', {
+			lastEventId: referenceLastEventId,
+			autoStart: false
+		} );
+		stream2.once( 'recentchange', ( edit ) => {
+			stream2.close();
+			expect(
+				Math.abs( new Date( edit.meta.dt ).getTime() -
+					new Date( referenceEvent.meta.dt ).getTime() )
+			).toBeLessThanOrEqual( 3e3 );
+		} );
+
+		// Last-Event-ID should match exactly.
+		expect( stream2.lastEventId ).toEqual( referenceLastEventId );
+
+		await stream2.open();
+		return Promise.race( [
+			stream2.waitUntilClosed(),
+			new Promise<void>( ( res ) => {
+				setTimeout( res, 30000 );
+			} )
+		] );
 	} );
 
 	test( 'fn open(): stream reopens if already open', () => {
@@ -161,92 +231,19 @@ describe( 'WikimediaStream tests', () => {
 		] ) );
 	} );
 
-	test( 'fn getLastEventId(): lastEventId is automatically saved', async () => {
-		const stream = new WikimediaStream( 'recentchange' );
-		stream.on( 'recentchange', () => {
-			stream.close();
-		} );
-		await stream.waitUntilClosed();
-		expect( typeof stream.getLastEventId() ).toBe( 'string' );
-
-		const parsedLID = JSON.parse( stream.getLastEventId() );
-		expect( parsedLID ).toBeInstanceOf( Array );
-		for ( const item of parsedLID ) {
-			expect( typeof item.topic ).toEqual( 'string' );
-			expect( typeof item.partition ).toEqual( 'number' );
-			if ( item.timestamp ) {
-				expect( typeof item.timestamp ).toEqual( 'number' );
-			}
-			if ( item.offset ) {
-				expect( typeof item.offset ).toEqual( 'number' );
-			}
-
-			expect( item.topic ).toMatch( /^[^.]+\.mediawiki\.recentchange$/ );
-		}
-	} );
-
-	test( 'fn getLastEventId(): stream is recoverable from last event ID', async () => {
-		expect.assertions( 3 );
-		let stream1ReferenceEvent : MediaWikiRecentChangeEvent;
-
-		const stream1 = new WikimediaStream( 'recentchange', {
-			autoStart: false,
-			since: new Date( Date.now() - ( 12 * 60 * 60 * 1e3 ) ).toISOString()
-		} );
-		stream1.once( 'recentchange', () => {
-			stream1.close();
-		} );
-		await stream1.open();
-		await stream1.waitUntilClosed();
-
-		const referenceLastEventId = stream1.getLastEventId();
-		expect( typeof referenceLastEventId ).toBe( 'string' );
-
-		stream1.once( 'recentchange', ( edit ) => {
-			// conditional statement to avoid race condition
-			if ( !stream1ReferenceEvent ) {
-				stream1ReferenceEvent = edit;
-			}
-			stream1.close();
-		} );
-		await stream1.open();
-		await stream1.waitUntilClosed();
-
-		const stream2 = new WikimediaStream( 'recentchange', {
-			lastEventId: JSON.parse( referenceLastEventId ),
-			autoStart: false
-		} );
-		console.log( stream1ReferenceEvent.meta.id );
-		stream2.once( 'recentchange', ( edit ) => {
-			// Repeated testing has proven that picking up from the exact event is
-			// nearly impossible. We'll do a close check instead.
-			console.log( edit.meta.id, '+' );
-			expect(
-				Math.abs( new Date( edit.meta.dt ).getTime() - new Date( stream1ReferenceEvent.meta.dt ).getTime() )
-			).toBeLessThan( 3e3 );
-			stream2.close();
-		} );
-		expect( stream2.getLastEventId() ).toEqual( referenceLastEventId );
-		await stream2.open();
-		return Promise.race( [
-			stream2.waitUntilClosed(),
-			new Promise<void>( ( res ) => {
-				setTimeout( res, 30000 );
-			} )
-		] );
-	} );
-
 	test( 'fn waitUntilClosed(): waits until closed', async () => {
+		expect.hasAssertions();
 		const stream = new WikimediaStream( 'recentchange' );
 		stream.on( 'open', () => {
 			stream.close();
 		} );
-		return Promise.race( [
+		await Promise.race( [
 			await stream.waitUntilClosed(),
-			new Promise<void>( ( res, rej ) => {
-				setTimeout( rej, 10000 );
+			new Promise<void>( ( res ) => {
+				setTimeout( res, 10000 );
 			} )
 		] );
+		expect( stream.eventSource ).toBeNull();
 	} );
 
 	test( 'fn waitUntilClosed(): returns immediately if already closed', async () => {

@@ -151,18 +151,20 @@ export type WikimediaStreamLastEventID = {
 	 * The Kafka partition of the stream.
 	 */
 	partition: number;
-} & ( {
 	/**
 	 * The timestamp to begin enumerating from. This should be a JavaScript-like
 	 * timestamp (millisecond-based).
+	 *
+	 * KafkaSSE will always provide either a timestamp or an offset.
 	 */
-	timestamp: number;
-} | {
+	timestamp?: number;
 	/**
 	 * The event offset to begin enumerating from.
+	 *
+	 * KafkaSSE will always provide either a timestamp or an offset.
 	 */
-	offset: number;
-} );
+	offset?: number;
+};
 
 export interface WikimediaStreamOptions extends EventSourceInitDict {
 	/**
@@ -177,6 +179,16 @@ export interface WikimediaStreamOptions extends EventSourceInitDict {
 	 * streaming. You may not specify topics that are not configured to be part
 	 * of this stream endpoint.
 	 *
+	 * If a timestamp is given, the stream will start from an event closest
+	 * to the timestamp provided. If an offset is provided, the stream will start
+	 * from the exact event at the provided offset. If both are provided, offset
+	 * takes precedence.
+	 *
+	 * The last event ID received by the stream will always take precedence. If
+	 * you want to continue a stream with a custom last event ID after this stream
+	 * has already received events, instantiate a new stream.
+	 *
+	 * @see https://github.com/wikimedia/kafkasse#readme
 	 * @example `[{topic: datacenter1.topic, partition: 0, offset: 12345}, ...]`
 	 */
 	lastEventId?: WikimediaStreamLastEventID[];
@@ -315,7 +327,7 @@ export class WikimediaStream extends EventEmitter {
 	 *
 	 * @private
 	 */
-	private lastEventId: string;
+	private _lastEventId: string;
 	/**
 	 * The streams that this WikimediaStream is currently listening/will listen to.
 	 *
@@ -344,6 +356,10 @@ export class WikimediaStream extends EventEmitter {
 	 */
 	public get status(): EventSourceState {
 		return this.eventSource == null ? -1 : this.eventSource.readyState;
+	}
+
+	public get lastEventId(): WikimediaStreamLastEventID[] {
+		return JSON.parse( this._lastEventId );
 	}
 
 	/**
@@ -423,7 +439,7 @@ export class WikimediaStream extends EventEmitter {
 		this.streams = specificStreams;
 
 		if ( options.lastEventId ) {
-			this.lastEventId = JSON.stringify( options.lastEventId );
+			this._lastEventId = JSON.stringify( options.lastEventId );
 		}
 
 		// Open this stream.
@@ -452,10 +468,13 @@ export class WikimediaStream extends EventEmitter {
 
 		// Send Last-Event-ID to pick up from cancels, overriding the
 		// Last-Event-ID header provided in options.
-		headers[ 'Last-Event-ID' ] = this.lastEventId ??
-			( options.lastEventId ?
-				JSON.stringify( options.lastEventId ) :
-				options.headers?.[ 'Last-Event-ID' ] );
+		if ( this._lastEventId ) {
+			headers[ 'Last-Event-ID' ] = this._lastEventId;
+		} else if ( options.lastEventId ) {
+			headers[ 'Last-Event-ID' ] = JSON.stringify( options.lastEventId );
+		} else if ( options.headers?.[ 'Last-Event-ID' ] ) {
+			headers[ 'Last-Event-ID' ] = options.headers[ 'Last-Event-ID' ];
+		}
 		// Send generic User-Agent when one has not been provided.
 		if (
 			Object.keys( headers )
@@ -559,7 +578,7 @@ export class WikimediaStream extends EventEmitter {
 		} );
 
 		this.eventSource.addEventListener( 'message', async ( event: MessageEvent ) => {
-			this.lastEventId = event.lastEventId;
+			this._lastEventId = event.lastEventId;
 
 			const data: WikimediaEventBase = JSON.parse( event.data );
 
@@ -592,13 +611,6 @@ export class WikimediaStream extends EventEmitter {
 		return new WikimediaStreamFilter<WikimediaEventStreamEventTypes[typeof eventType], T>(
 			this, eventType
 		);
-	}
-
-	/**
-	 * Get the last event ID.
-	 */
-	getLastEventId(): string | null {
-		return this.lastEventId;
 	}
 
 	/**

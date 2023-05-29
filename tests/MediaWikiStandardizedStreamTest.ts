@@ -31,10 +31,6 @@ beforeAll( () => {
 	expect( WikimediaStream.VERSION ).toBe( version );
 } );
 
-beforeEach( ( doneFn ) => {
-	setTimeout( doneFn, 2000 );
-} );
-
 function generateStream( topic: WikimediaEventStream ): Promise<WikimediaStream> {
 	return new Promise<WikimediaStream>( res => {
 		const stream = new WikimediaStream(
