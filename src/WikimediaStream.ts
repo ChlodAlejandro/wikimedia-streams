@@ -529,8 +529,15 @@ export class WikimediaStream extends EventEmitter {
 		} );
 
 		this.eventSource.addEventListener( 'error', ( e ) => {
+			if ( ( e as any ).status === 500 ) {
+				// Internal server error.
+				// Back off and try again.
+				setTimeout( this.open.bind( this, options ), 2e3 );
+				return;
+			}
+
 			if ( ( e as any ).message !== undefined ) {
-				// This wasn't a natural server disconnect. Emit error.
+				// This wasn't a 15-minute timeout disconnect. Emit error.
 				this.emit( 'error', e as any );
 			}
 			// Attempt reopen if error was fatal.
