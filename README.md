@@ -202,6 +202,28 @@ Due to limitations in TypeScript, the received type may be too broad compared to
 		}
 	});
 	```
+## Resuming streams
+After every received event, the stream stores the ID of the last event that was sent.
+This ID can be used to continue streams, so that you don't miss any events. You can
+also save this ID to a file when gracefully stopping for a restart, and use it again
+at a later time. Note that streams cannot be replayed indefinitely; EventStreams may
+only hold an event [for a certain duration](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams#Historical_Consumption).
+
+```ts
+const stream = new WikimediaStream( 'recentchange' );
+
+// Stopping!
+fs.writeFileSync( 'last-event.json', JSON.stringify( stream.lastEventId ) );
+stream.close();
+
+// Restarting!
+const stream2 = new WikimediaStream( 'recentchange', {
+	lastEventId: JSON.parse( fs.readFileSync( 'last-event.json' ).toString( 'utf8' ) )
+} );
+```
+
+When re-opening a previously closed stream, the library will automatically resume
+from the last event that it processed. To avoid this, instantiate a new `WikimediaStream`.
 
 ## License
 
