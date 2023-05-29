@@ -1,0 +1,1 @@
+These are supplementary code files for [User:Chlod Alejandro/Tips for EventStreams consumers](https://wikitech.wikimedia.org/wiki/User:Chlod_Alejandro/Tips_for_EventStreams_consumers) on the Wikitech wiki.
