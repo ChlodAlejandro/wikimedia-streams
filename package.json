@@ -3,6 +3,12 @@
     "version": "1.0.0",
     "description": "Receive events from Wikimedia wikis using the Wikimedia Event Platforms' EventStreams.",
     "main": "build/src/index.js",
+    "files": [
+        "build/",
+        "CHANGELOG.md",
+        "LICENSE",
+        "README"
+    ],
     "scripts": {
         "build": "tsc",
         "prepack": "npm run build",
