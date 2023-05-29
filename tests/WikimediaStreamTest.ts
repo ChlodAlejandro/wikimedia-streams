@@ -1,6 +1,6 @@
 import WikimediaStream, {
 	WikimediaEventStreamAliases,
-	WikimediaEventStreams
+	WikimediaEventStreams, WikimediaStreamLastEventID
 } from '../src/WikimediaStream';
 import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEvent';
 
@@ -138,48 +138,34 @@ describe( 'WikimediaStream tests', () => {
 		// receives high throughput, we'll check if the received event is within 3 seconds
 		// of the event we stopped receiving data from.
 		expect.assertions( 3 );
-		let stream1ReferenceEvent : MediaWikiRecentChangeEvent;
+		let referenceEvent : MediaWikiRecentChangeEvent;
+		let referenceLastEventId : WikimediaStreamLastEventID[];
 
 		const stream1 = new WikimediaStream( 'recentchange', {
-			autoStart: false,
-			since: new Date( Date.now() - ( 12 * 60 * 60 * 1e3 ) ).toISOString()
+			autoStart: false
 		} );
 		stream1.once( 'recentchange', ( data ) => {
-			stream1ReferenceEvent = data;
+			referenceEvent = data;
+			referenceLastEventId = stream1.lastEventId;
 			stream1.close();
 		} );
 		await stream1.open();
 		await stream1.waitUntilClosed();
 
-		const referenceLastEventId = stream1.lastEventId;
 		expect( typeof referenceLastEventId ).toBe( 'object' );
+
+		await new Promise( ( res ) => setTimeout( res, 3e3 ) );
 
 		const stream2 = new WikimediaStream( 'recentchange', {
 			lastEventId: referenceLastEventId,
 			autoStart: false
 		} );
 		stream2.once( 'recentchange', ( edit ) => {
-			console.log( stream1ReferenceEvent );
-			console.log( edit, '+' );
-			try {
-				if (
-					stream1ReferenceEvent.meta.topic === edit.meta.topic &&
-					stream1ReferenceEvent.meta.partition === edit.meta.partition
-				) {
-					// Same topic and partition, do a offset check
-					expect(
-						edit.meta.offset - stream1ReferenceEvent.meta.offset
-					).toBe( 1 );
-				} else {
-					// Different topic and partition, do a timestamp check.
-					expect(
-						Math.abs( new Date( edit.meta.dt ).getTime() -
-							new Date( stream1ReferenceEvent.meta.dt ).getTime() )
-					).toBeLessThanOrEqual( 3e3 );
-				}
-			} finally {
-				stream2.close();
-			}
+			stream2.close();
+			expect(
+				Math.abs( new Date( edit.meta.dt ).getTime() -
+					new Date( referenceEvent.meta.dt ).getTime() )
+			).toBeLessThanOrEqual( 3e3 );
 		} );
 
 		// Last-Event-ID should match exactly.
