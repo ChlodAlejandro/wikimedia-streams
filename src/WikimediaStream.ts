@@ -364,7 +364,7 @@ export class WikimediaStream extends EventEmitter {
 	/**
 	 * The version of this package. Used for the default `User-Agent` header.
 	 */
-	static readonly VERSION = '1.0.0';
+	static readonly VERSION = '1.0.1';
 
 	/**
 	 * Checks if a given string is a valid {@link WikimediaEventStream}.
