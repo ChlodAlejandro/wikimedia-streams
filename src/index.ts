@@ -1,2 +1,5 @@
-export { WikimediaStream as default, WikimediaStream } from './WikimediaStream';
+export {
+	WikimediaStream as default
+} from './WikimediaStream';
+export * from './WikimediaStream';
 export { WikimediaStreamFilter } from './WikimediaStreamFilter';
