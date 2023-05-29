@@ -24,8 +24,12 @@
     "keywords": [
         "wikimedia",
         "wikipedia",
+        "mediawiki",
         "eventsource",
-        "sse"
+        "sse",
+        "stream",
+        "eventstreams",
+        "eventsource"
     ],
     "author": "Chlod Alejandro <chlod@chlod.net>",
     "license": "Apache-2.0",
