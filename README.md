@@ -1,5 +1,6 @@
 # wikimedia-streams
 <img align="right" width="70" height="70" alt="wikimedia-streams logo" src="https://raw.githubusercontent.com/ChlodAlejandro/wikimedia-streams/master/assets/wikimedia-streams.png">
+
 [![npm version](https://img.shields.io/npm/v/wikimedia-streams.svg?style=flat-square)](https://www.npmjs.org/package/wikimedia-streams)
 [![npm downloads](https://img.shields.io/npm/dm/wikimedia-streams.svg?style=flat-square)](http://npm-stat.com/charts.html?package=wikimedia-streams)
 
