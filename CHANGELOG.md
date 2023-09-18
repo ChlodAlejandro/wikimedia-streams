@@ -1,3 +1,6 @@
+# 2.0.0
+* **BREAKING CHANGE:** `mediawiki.revision-score` has been removed following its deprecation ([phab:T342116](https://phabricator.wikimedia.org/T342116))
+
 # 1.0.1
 * Minor cleanup and documentation fixes.
 

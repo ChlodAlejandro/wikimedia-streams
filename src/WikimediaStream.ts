@@ -8,7 +8,6 @@ import type MediaWikiPageMoveEvent from './streams/MediaWikiPageMoveEvent';
 import type MediaWikiPagePropertiesChangeEvent from './streams/MediaWikiPagePropertiesChangeEvent';
 import type MediaWikiPageUndeleteEvent from './streams/MediaWikiPageUndeleteEvent';
 import type MediaWikiRecentChangeEvent from './streams/MediaWikiRecentChangeEvent';
-import type MediaWikiRevisionScoreEvent from './streams/MediaWikiRevisionScoreEvent';
 import type MediaWikiRevisionVisibilityChangeEvent
 	from './streams/MediaWikiRevisionVisibilityChangeEvent';
 import type EventGateTestEvent from './streams/EventGateTestEvent';
@@ -31,7 +30,6 @@ export const WikimediaEventStreams = <const>[
 	'mediawiki.page-undelete',
 	'mediawiki.recentchange',
 	'mediawiki.revision-create',
-	'mediawiki.revision-score',
 	'mediawiki.revision-tags-change',
 	'mediawiki.revision-visibility-change'
 ];
@@ -51,7 +49,6 @@ export const WikimediaEventStreamAliases = <const>{
 	'page-undelete': 'mediawiki.page-undelete',
 	recentchange: 'mediawiki.recentchange',
 	'revision-create': 'mediawiki.revision-create',
-	'revision-score': 'mediawiki.revision-score',
 	test: 'eventgate-main.test.event'
 };
 
@@ -78,8 +75,6 @@ export type WikimediaEventStreamEventTypes = {
 	'recentchange': MediaWikiRecentChangeEvent,
 	'mediawiki.revision-create': MediaWikiRevisionCreateEvent,
 	'revision-create': MediaWikiRevisionCreateEvent,
-	'mediawiki.revision-score': MediaWikiRevisionScoreEvent,
-	'revision-score': MediaWikiRevisionScoreEvent,
 	'mediawiki.revision-tags-change': MediaWikiRevisionTagsChangeEvent,
 	'mediawiki.revision-visibility-change': MediaWikiRevisionVisibilityChangeEvent
 };

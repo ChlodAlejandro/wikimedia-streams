@@ -17,7 +17,6 @@ import { isMediaWikiPageMoveEvent } from '../src/streams/MediaWikiPageMoveEvent'
 import {
 	isMediaWikiPagePropertiesChangeEvent
 } from '../src/streams/MediaWikiPagePropertiesChangeEvent';
-import { isMediaWikiRevisionScoreEvent } from '../src/streams/MediaWikiRevisionScoreEvent';
 import {
 	isMediaWikiRevisionVisibilityChangeEvent
 } from '../src/streams/MediaWikiRevisionVisibilityChangeEvent';
@@ -250,64 +249,6 @@ test.each( [
 			expect( typeof data.prior_state ).toBe( 'object' );
 			expect( typeof data.prior_state.page_id ).toBe( 'number' );
 		}
-		if ( ++successCount > 20 ) {
-			stream.close();
-		}
-	} );
-	await stream.waitUntilClosed();
-} );
-
-test.each( [
-	<const>'mediawiki.revision-score',
-	<const>'revision-score'
-] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
-	let successCount = 0;
-	const stream = await generateStream( topic );
-	stream.on( topic, ( data ) => {
-		expect( isMediaWikiRevisionScoreEvent( data ) ).toBe( true );
-		testMediaWikiEvent( data );
-		testPage( data );
-		if ( data.performer ) {
-			testUser( data.performer );
-		}
-		expect( typeof data.rev_id ).toBe( 'number' );
-		if ( data.rev_parent_id ) {
-			expect( typeof data.rev_parent_id ).toBe( 'number' );
-		}
-		expect( typeof data.rev_timestamp ).toBe( 'string' );
-		expect( new Date( data.rev_timestamp ).getTime() ).not.toBeNaN();
-
-		if ( data.scores ) {
-			expect( typeof data.scores ).toBe( 'object' );
-			for ( const [ modelName, model ] of Object.entries( data.scores ) ) {
-				expect( typeof modelName ).toBe( 'string' );
-				expect( typeof model ).toBe( 'object' );
-				expect( typeof model.model_name ).toBe( 'string' );
-				expect( typeof model.model_version ).toBe( 'string' );
-				expect( model.prediction ).toBeInstanceOf( Array );
-				for ( const prediction of model.prediction ) {
-					expect( typeof prediction ).toBe( 'string' );
-				}
-				expect( typeof model.probability ).toBe( 'object' );
-				for ( const [ name, prob ] of Object.entries( model.probability ) ) {
-					expect( typeof name ).toBe( 'string' );
-					expect( typeof prob ).toBe( 'number' );
-				}
-			}
-		}
-		if ( data.errors ) {
-			expect( typeof data.errors ).toBe( 'object' );
-			for ( const [ modelName, model ] of Object.entries( data.errors ) ) {
-				expect( typeof modelName ).toBe( 'string' );
-				expect( typeof model ).toBe( 'object' );
-				expect( typeof model.model_name ).toBe( 'string' );
-				expect( typeof model.model_version ).toBe( 'string' );
-				expect( typeof model.type ).toBe( 'string' );
-				expect( typeof model.message ).toBe( 'string' );
-			}
-		}
-
 		if ( ++successCount > 20 ) {
 			stream.close();
 		}
