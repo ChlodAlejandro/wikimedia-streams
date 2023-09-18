@@ -59,9 +59,13 @@ You can also use `.on("mediawiki.recentchange")` to listen to recent changes. A 
 | [mediawiki.page-undelete](https://stream.wikimedia.org/v2/stream/mediawiki.page-undelete)                           | `page-undelete` | Undeleted pages.                                                                                     | 
 | [mediawiki.recentchange](https://stream.wikimedia.org/v2/stream/mediawiki.recentchange)                             | `recentchange` | Recent changes. The recent changes schema is drastically different from the schema of other streams. |
 | [mediawiki.revision-create](https://stream.wikimedia.org/v2/stream/mediawiki.revision-create)                       | `revision-create` | Edits to pages.                                                                                      |
-| [mediawiki.revision-score](https://stream.wikimedia.org/v2/stream/mediawiki.revision-score)                         | `revision-score` | ORES scores for edits to pages.                                                                      |
 | [mediawiki.revision-tags-change](https://stream.wikimedia.org/v2/stream/mediawiki.revision-tags-change)             |  | Changes to revision tags. Added in v0.4.0.                                                            |
 | [mediawiki.revision-visibility-change](https://stream.wikimedia.org/v2/stream/mediawiki.revision-visibility-change) | | Changes to revision visibility (caused by suppression or revision deletion).                         |
+
+### Removed streams
+| **Stream**                                                                                                          | **Aliases**      | **Description**                                                                                                         |
+|---------------------------------------------------------------------------------------------------------------------|------------------|-------------------------------------------------------------------------------------------------------------------------|
+| [mediawiki.revision-score](https://stream.wikimedia.org/v2/stream/mediawiki.revision-score)                         | `revision-score` | ORES scores for edits to pages. Removed as of v2.0.0 (09-14-2023; [T342116](https://phabricator.wikimedia.org/T342116)) |
 
 ### Multiple streams
 You can listen to multiple streams at once by passing an array as the parameter when creating a WikimediaStream.
