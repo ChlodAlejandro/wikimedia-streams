@@ -27,6 +27,12 @@ import {
 beforeAll( () => {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	expect( WikimediaStream.VERSION ).toBe( require( '../package.json' ).version );
+
+	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${
+		WikimediaStream.VERSION
+	} (chlod@chlod.net; github@ChlodAlejandro/wikimedia-streams) ${
+		WikimediaStream.genericUserAgent
+	}`;
 } );
 
 beforeEach( ( doneFn ) => {

@@ -75,6 +75,13 @@ const minToPass = 10;
 beforeAll( ( done ) => {
 	expect( WikimediaStream.VERSION ).toBe( version );
 	stream = new WikimediaStream( 'recentchange' );
+
+	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${
+		WikimediaStream.VERSION
+	} (chlod@chlod.net; github@ChlodAlejandro/wikimedia-streams) ${
+		WikimediaStream.genericUserAgent
+	}`;
+
 	done();
 } );
 

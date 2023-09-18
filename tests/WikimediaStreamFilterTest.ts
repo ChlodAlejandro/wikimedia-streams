@@ -2,6 +2,14 @@ import WikimediaStream from '../src/WikimediaStream';
 import { version } from '../package.json';
 import { WikimediaStreamFilter } from '../src';
 
+beforeAll( () => {
+	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${
+		WikimediaStream.VERSION
+	} (chlod@chlod.net; github@ChlodAlejandro/wikimedia-streams) ${
+		WikimediaStream.genericUserAgent
+	}`;
+} );
+
 let stream: WikimediaStream;
 
 describe( 'WikimediaStreamFilter tests', () => {

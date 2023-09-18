@@ -4,6 +4,14 @@ import WikimediaStream, {
 } from '../src/WikimediaStream';
 import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEvent';
 
+beforeAll( () => {
+	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${
+		WikimediaStream.VERSION
+	} (chlod@chlod.net; github@ChlodAlejandro/wikimedia-streams) ${
+		WikimediaStream.genericUserAgent
+	}`;
+} );
+
 describe( 'WikimediaStream tests', () => {
 
 	beforeEach( ( doneFn ) => {

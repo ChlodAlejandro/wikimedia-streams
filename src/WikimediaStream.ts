@@ -362,6 +362,16 @@ export class WikimediaStream extends EventEmitter {
 	static readonly VERSION = '1.0.1';
 
 	/**
+	 * The generic user agent to be used by wikimedia-streams when
+	 * no default user agent is used or set.
+	 */
+	static readonly genericUserAgent = `wikimedia-streams/${WikimediaStream.VERSION}`;
+	/**
+	 * The default user agent to be used by wikimedia-streams.
+	 */
+	static defaultUserAgent = WikimediaStream.genericUserAgent;
+
+	/**
 	 * Checks if a given string is a valid {@link WikimediaEventStream}.
 	 *
 	 * @param stream The string to check.
@@ -474,7 +484,7 @@ export class WikimediaStream extends EventEmitter {
 			Object.keys( headers )
 				.some( ( header ) => header.toLowerCase() === 'user-agent' ) === false
 		) {
-			headers[ 'User-Agent' ] = `wikimedia-streams/${WikimediaStream.VERSION}`;
+			headers[ 'User-Agent' ] = WikimediaStream.defaultUserAgent;
 		}
 
 		const url = new URL( `https://stream.wikimedia.org/v2/stream/${this.streams.join( ',' )}` );
