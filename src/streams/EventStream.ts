@@ -12,7 +12,6 @@ import MediaWikiPagePropertiesChangeEvent from './MediaWikiPagePropertiesChangeE
 import MediaWikiPageUndeleteEvent from './MediaWikiPageUndeleteEvent';
 import MediaWikiRecentChangeEvent from './MediaWikiRecentChangeEvent';
 import MediaWikiRevisionCreateEvent from './MediaWikiRevisionCreateEvent';
-import MediaWikiRevisionScoreEvent from './MediaWikiRevisionScoreEvent';
 import MediaWikiRevisionVisibilityChangeEvent from './MediaWikiRevisionVisibilityChangeEvent';
 import MediaWikiRevisionTagsChangeEvent from './MediaWikiRevisionTagsChangeEvent';
 
@@ -114,7 +113,6 @@ type WikimediaEvent =
 	| MediaWikiPageUndeleteEvent
 	| MediaWikiRecentChangeEvent
 	| MediaWikiRevisionCreateEvent
-	| MediaWikiRevisionScoreEvent
 	| MediaWikiRevisionTagsChangeEvent
 	| MediaWikiRevisionVisibilityChangeEvent;
 
