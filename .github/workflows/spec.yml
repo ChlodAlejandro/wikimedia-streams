@@ -1,0 +1,19 @@
+name: Monitor for spec changes
+
+on:
+    schedule:
+        - cron: '42 6 */2 * *'
+
+jobs:
+    spec:
+        name: Verify spec
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v3
+            -   run: |
+                    EXPECT="$( cat spec.sha1 )"
+                    ACTUAL="$( curl https://stream.wikimedia.org/?spec | openssl dgst -sha1 )"
+                    if [ "$EXPECT" != "$ACTUAL" ]; then
+                        echo "Spec has changed. Please update and change the EXPECT value in ./spec.sha1"
+                        exit 1
+                    fi
