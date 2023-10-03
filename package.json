@@ -2,7 +2,7 @@
     "name": "wikimedia-streams",
     "version": "2.0.0",
     "description": "Receive events from Wikimedia wikis using the Wikimedia Event Platforms' EventStreams.",
-    "main": "build/src/index.js",
+    "main": "build/index.js",
     "files": [
         "build/",
         "CHANGELOG.md",
