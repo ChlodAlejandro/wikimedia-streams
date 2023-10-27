@@ -231,6 +231,14 @@ const stream2 = new WikimediaStream( 'recentchange', {
 When re-opening a previously closed stream, the library will automatically resume
 from the last event that it processed. To avoid this, instantiate a new `WikimediaStream`.
 
+## Canary events
+[Canary events](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams#Canary_Events)
+are events that are sent to ensure that the stream is still active. These events are filtered
+out by wikimedia-streams by default. To enable them, set the `enableCanary` option to `true`.
+Note that you will be required to filter out these events yourself, or process them accordingly.
+
+```ts
+
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License");

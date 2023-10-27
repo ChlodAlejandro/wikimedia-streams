@@ -1,3 +1,9 @@
+# 2.1.0
+* Added option to avoid filtering out canary events: `enableCanary`.
+
+# 2.0.1
+* Fixed `package.json` main field to point to the correct file.
+
 # 2.0.0
 * **BREAKING CHANGE:** `mediawiki.revision-score` has been removed following its deprecation ([phab:T342116](https://phabricator.wikimedia.org/T342116))
 

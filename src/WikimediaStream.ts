@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import EventSource, { EventSourceInitDict } from 'eventsource';
-import WikimediaEventBase from './streams/EventStream';
+import WikimediaEventBase, { WikimediaEventMeta } from './streams/EventStream';
 import type MediaWikiRevisionCreateEvent from './streams/MediaWikiRevisionCreateEvent';
 import type MediaWikiPageDeleteEvent from './streams/MediaWikiPageDeleteEvent';
 import type MediaWikiPageLinksChangeEvent from './streams/MediaWikiPageLinksChangeEvent';
@@ -206,6 +206,16 @@ export interface WikimediaStreamOptions extends EventSourceInitDict {
 	 * @default true
 	 */
 	autoStart?: boolean;
+	/**
+	 * Enable listening to canary events. Canary events are sent multiple times
+	 * an hour to ensure that streams are not broken. They are filtered by
+	 * default to avoid "fake" events from being received by a client.
+	 *
+	 * @see https://w.wiki/7$2z EventStreams documentation on canary events
+	 * @see https://w.wiki/7$2v Technical documentation on canary events
+	 * @default false
+	 */
+	enableCanary?: boolean;
 }
 
 export type ErrorEvent = Event & { type: 'error', message: string | undefined };
@@ -581,10 +591,16 @@ export class WikimediaStream extends EventEmitter {
 			}
 		} );
 
+		const skipCanary = !( options.enableCanary ?? false );
 		this.eventSource.addEventListener( 'message', async ( event: MessageEvent ) => {
 			this._lastEventId = event.lastEventId;
 
 			const data: WikimediaEventBase = JSON.parse( event.data );
+
+			if ( skipCanary && ( data.meta as WikimediaEventMeta )?.domain === 'canary' ) {
+				// Block all incoming canary events unless requested by user.
+				return;
+			}
 
 			// Emit event.
 			this.emit( data.meta.stream, data, event );
