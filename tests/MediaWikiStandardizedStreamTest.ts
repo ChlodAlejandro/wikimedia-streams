@@ -71,7 +71,10 @@ test.each( [
 		expect( typeof data.meta.dt ).toBe( 'string' );
 		expect( typeof data.meta.stream ).toBe( 'string' );
 		expect( new Date( data.meta.dt ).getTime() ).not.toBeNaN();
-		expect( WikimediaStream.isSpecificWikimediaStream( data.meta.stream ) ).toBe( true );
+		expect(
+			WikimediaStream.isSpecificWikimediaStream( data.meta.stream ) ||
+			data.meta.stream
+		).toBe( true );
 		expect( typeof data.meta.topic ).toBe( 'string' );
 		expect( typeof data.meta.partition ).toBe( 'number' );
 		expect( typeof data.meta.offset ).toBe( 'number' );
@@ -96,7 +99,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiEvent( data ) ).toBe( true );
+		expect( isMediaWikiEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		testComment( data );
@@ -119,7 +122,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiPageDeleteEvent( data ) ).toBe( true );
+		expect( isMediaWikiPageDeleteEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		testComment( data );
@@ -143,7 +146,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiPageLinksChangeEvent( data ) ).toBe( true );
+		expect( isMediaWikiPageLinksChangeEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		if ( data.performer ) {
@@ -151,14 +154,14 @@ test.each( [
 		}
 		expect( typeof data.rev_id ).toBe( 'number' );
 		if ( data.removed_links ) {
-			expect( Array.isArray( data.removed_links ) ).toBe( true );
+			expect( Array.isArray( data.removed_links ) || data ).toBe( true );
 			for ( const link of data.removed_links ) {
 				expect( typeof link.link ).toBe( 'string' );
 				expect( typeof link.external ).toBe( 'boolean' );
 			}
 		}
 		if ( data.added_links ) {
-			expect( Array.isArray( data.added_links ) ).toBe( true );
+			expect( Array.isArray( data.added_links ) || data ).toBe( true );
 			for ( const link of data.added_links ) {
 				expect( typeof link.link ).toBe( 'string' );
 				expect( typeof link.external ).toBe( 'boolean' );
@@ -179,7 +182,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiPageMoveEvent( data ) ).toBe( true );
+		expect( isMediaWikiPageMoveEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		testComment( data );
@@ -212,7 +215,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiPagePropertiesChangeEvent( data ) ).toBe( true );
+		expect( isMediaWikiPagePropertiesChangeEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		if ( data.performer ) {
@@ -244,7 +247,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiPagePropertiesChangeEvent( data ) ).toBe( true );
+		expect( isMediaWikiPagePropertiesChangeEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		if ( data.performer ) {
@@ -269,7 +272,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiRevisionTagsChangeEvent( data ) ).toBe( true );
+		expect( isMediaWikiRevisionTagsChangeEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		testComment( data );
@@ -296,7 +299,7 @@ test.each( [
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
-		expect( isMediaWikiRevisionVisibilityChangeEvent( data ) ).toBe( true );
+		expect( isMediaWikiRevisionVisibilityChangeEvent( data ) || data ).toBe( true );
 		testMediaWikiEvent( data );
 		testPage( data );
 		testComment( data );
