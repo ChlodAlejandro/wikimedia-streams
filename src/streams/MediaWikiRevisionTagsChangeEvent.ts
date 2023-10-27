@@ -7,7 +7,7 @@ import { isMediaWikiEvent, MediaWikiEvent } from './EventStream';
 import Page, { hasMediaWikiPage } from './common/Page';
 import Comment from './common/Comment';
 import Revision, { hasMediaWikiRevision } from './common/Revision';
-import { isMediaWikiUser } from './common/User';
+import User from './common/User';
 
 /** Represents a MW Revision Tags Change event. */
 export default interface MediaWikiRevisionTagsChangeEvent
@@ -28,6 +28,9 @@ export default interface MediaWikiRevisionTagsChangeEvent
 		tags: string[];
 	};
 
+	/** Represents the user that performed this change. */
+	performer?: User;
+
 }
 
 /**
@@ -42,6 +45,5 @@ export function isMediaWikiRevisionTagsChangeEvent( object: any ):
 		Array.isArray( object.prior_state.tags ) &&
 		hasMediaWikiPage( object ) &&
 		hasMediaWikiRevision( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
 		isMediaWikiEvent( object );
 }
