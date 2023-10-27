@@ -15,7 +15,7 @@ beforeAll( () => {
 describe( 'WikimediaStream tests', () => {
 
 	beforeEach( ( doneFn ) => {
-		setTimeout( doneFn, 1000 );
+		setTimeout( doneFn, 5000 );
 	} );
 
 	test( 'start stream from canonical ID (mediawiki.recentchange)', () => {
