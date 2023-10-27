@@ -11,12 +11,12 @@ jobs:
         steps:
             -   uses: actions/checkout@v3
             -   run: |
-                    EXPECT="$( cat spec.sha1 )"
+                    EXPECT="$( cat spec.json | sha1sum )"
                     ACTUAL="$( curl https://stream.wikimedia.org/?spec | sha1sum )"
                     echo "Expected: $EXPECT"
                     echo "Actual:   $ACTUAL"
                     if [[ "$EXPECT" != "$ACTUAL" ]]; then
-                        echo "Spec has changed. Please update and change the EXPECT value in ./spec.sha1"
-                        echo "Update with \`curl https://stream.wikimedia.org/?spec | sha1sum > spec.sha1\`"
-                        # exit 1
+                        echo "Spec has changed. Please update the code."
+                        echo "Update with \`curl https://stream.wikimedia.org/?spec > spec.json\`"
+                        exit 1
                     fi
