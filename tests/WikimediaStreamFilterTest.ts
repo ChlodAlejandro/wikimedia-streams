@@ -24,7 +24,6 @@ describe( 'WikimediaStreamFilter tests', () => {
 	} );
 
 	test( 'none', ( doneFn ) => {
-		expect.hasAssertions();
 		const filter = stream.filter( 'recentchange' )
 			.none( {
 				wiki: 'enwiki'
@@ -33,15 +32,15 @@ describe( 'WikimediaStreamFilter tests', () => {
 				expect( data.$schema ).toBe( '/mediawiki/recentchange/1.0.0' );
 				expect( data.wiki ).not.toBe( 'enwiki' );
 			} );
-
 		setTimeout( () => {
 			filter.removeAllListeners();
+			expect.hasAssertions();
 			doneFn();
 		}, 5e3 );
+
 	}, 20e3 );
 
 	test( 'all', ( doneFn ) => {
-		expect.hasAssertions();
 		const filter = stream.filter( 'recentchange' )
 			.all( {
 				wiki: 'wikidatawiki'
@@ -53,12 +52,12 @@ describe( 'WikimediaStreamFilter tests', () => {
 
 		setTimeout( () => {
 			filter.removeAllListeners();
+			expect.hasAssertions();
 			doneFn();
 		}, 5e3 );
 	}, 20e3 );
 
 	test( 'any', ( doneFn ) => {
-		expect.hasAssertions();
 		const filter = stream.filter( 'recentchange' )
 			.any( {
 				wiki: 'commonswiki'
@@ -74,12 +73,12 @@ describe( 'WikimediaStreamFilter tests', () => {
 
 		setTimeout( () => {
 			filter.removeAllListeners();
+			expect.hasAssertions();
 			doneFn();
 		}, 5e3 );
 	}, 20e3 );
 
 	test( 'depth 2', ( doneFn ) => {
-		expect.hasAssertions();
 		const filter = stream.filter( 'recentchange' )
 			.all( {
 				meta: {
@@ -93,6 +92,7 @@ describe( 'WikimediaStreamFilter tests', () => {
 
 		setTimeout( () => {
 			filter.removeAllListeners();
+			expect.hasAssertions();
 			doneFn();
 		}, 5e3 );
 	}, 20e3 );
@@ -120,7 +120,6 @@ describe( 'WikimediaStreamFilter tests', () => {
 	}, 20e3 );
 
 	test( 'cloning', ( doneFn ) => {
-		expect.hasAssertions();
 		const fakeFunction1 = jest.fn();
 		const fakeFunction2 = jest.fn();
 		const fakeFunction3 = jest.fn();
@@ -174,6 +173,7 @@ describe( 'WikimediaStreamFilter tests', () => {
 			expect( fakeFunction3 ).toBeCalled();
 			filter1.removeAllListeners();
 			filter2.removeAllListeners();
+			expect.hasAssertions();
 			doneFn();
 		}, 5e3 );
 	}, 20e3 );

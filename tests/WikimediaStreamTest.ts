@@ -57,7 +57,6 @@ describe( 'WikimediaStream tests', () => {
 	} );
 
 	test( 'cfg lastEventId: test with offset', async () => {
-		expect.hasAssertions();
 		let referenceEvent : MediaWikiRecentChangeEvent;
 
 		const stream1 = new WikimediaStream( 'recentchange' );
@@ -88,10 +87,10 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		await stream2.open();
 		await stream2.waitUntilClosed();
+		expect.hasAssertions();
 	} );
 
 	test( 'cfg since: similar time', async () => {
-		expect.hasAssertions();
 		let referenceEvent : MediaWikiRecentChangeEvent;
 
 		const stream1 = new WikimediaStream( 'recentchange' );
@@ -117,6 +116,7 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		await stream2.open();
 		await stream2.waitUntilClosed();
+		expect.hasAssertions();
 	} );
 
 	test( 'get lastEventId: lastEventId is automatically saved', async () => {
@@ -244,7 +244,6 @@ describe( 'WikimediaStream tests', () => {
 	} );
 
 	test( 'fn waitUntilClosed(): waits until closed', async () => {
-		expect.hasAssertions();
 		const stream = new WikimediaStream( 'recentchange' );
 		stream.on( 'open', () => {
 			stream.close();
@@ -256,6 +255,7 @@ describe( 'WikimediaStream tests', () => {
 			} )
 		] );
 		expect( stream.eventSource ).toBeNull();
+		expect.hasAssertions();
 	} );
 
 	test( 'fn waitUntilClosed(): returns immediately if already closed', async () => {

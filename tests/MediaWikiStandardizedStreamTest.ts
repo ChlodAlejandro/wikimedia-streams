@@ -58,7 +58,6 @@ test.each( [
 	<const>'eventgate-main.test.event',
 	<const>'test'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -87,6 +86,7 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
@@ -95,7 +95,6 @@ test.each( [
 	<const>'mediawiki.revision-create',
 	<const>'revision-create'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -112,13 +111,13 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
 	<const>'mediawiki.page-delete',
 	<const>'page-delete'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -136,13 +135,13 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
 	<const>'mediawiki.page-links-change',
 	<const>'page-links-change'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -172,13 +171,13 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
 	<const>'mediawiki.page-move',
 	<const>'page-move'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -205,13 +204,13 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
 	<const>'mediawiki.page-properties-change',
 	<const>'page-properties-change'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -237,13 +236,13 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
 	<const>'mediawiki.page-undelete',
 	<const>'page-undelete'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -263,12 +262,12 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
 	<const>'mediawiki.revision-tags-change'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -290,12 +289,12 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
 
 test.each( [
 	<const>'mediawiki.revision-visibility-change'
 ] )( '%s', async ( topic ) => {
-	expect.hasAssertions();
 	let successCount = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
@@ -320,4 +319,5 @@ test.each( [
 		}
 	} );
 	await stream.waitUntilClosed();
+	expect.hasAssertions();
 } );
