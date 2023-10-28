@@ -69,6 +69,9 @@ export function isMediaWikiPageLinksChangeEvent( object: any ):
 			)
 		) ) &&
 		hasMediaWikiPage( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
+		(
+			!( object as any ).performer ||
+			isMediaWikiUser( ( object as any ).performer )
+		) &&
 		isMediaWikiEvent( object );
 }

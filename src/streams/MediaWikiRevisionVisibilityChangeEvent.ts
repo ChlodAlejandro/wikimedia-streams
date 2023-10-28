@@ -66,6 +66,9 @@ export function isMediaWikiRevisionVisibilityChangeEvent( object: any ):
 		typeof object.prior_state.visibility.comment === 'boolean' &&
 		hasMediaWikiPage( object ) &&
 		hasMediaWikiRevision( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
+		(
+			!( object as any ).performer ||
+			isMediaWikiUser( ( object as any ).performer )
+		) &&
 		isMediaWikiEvent( object );
 }

@@ -38,6 +38,9 @@ export function isMediaWikiPageDeleteEvent( object: any ): object is MediaWikiPa
 		typeof object.rev_count === 'number' &&
 		( !object.comment || hasMediaWikiComment( object ) ) &&
 		hasMediaWikiPage( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
+		(
+			!( object as any ).performer ||
+			isMediaWikiUser( ( object as any ).performer )
+		) &&
 		isMediaWikiEvent( object );
 }

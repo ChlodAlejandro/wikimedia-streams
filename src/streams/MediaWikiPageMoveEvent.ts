@@ -71,6 +71,9 @@ export function isMediaWikiPageMoveEvent( object: any ): object is MediaWikiPage
 		typeof object.prior_state.rev_id === 'number' &&
 		( !object.comment || hasMediaWikiComment( object ) ) &&
 		hasMediaWikiPage( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
+		(
+			!( object as any ).performer ||
+			isMediaWikiUser( ( object as any ).performer )
+		) &&
 		isMediaWikiEvent( object );
 }

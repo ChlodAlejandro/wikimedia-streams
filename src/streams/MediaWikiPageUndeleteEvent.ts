@@ -50,6 +50,9 @@ export function isMediaWikiPageUndeleteEvent( object: any ): object is MediaWiki
 		typeof object.prior_state.page_id === 'number' &&
 		( !object.comment || hasMediaWikiComment( object ) ) &&
 		hasMediaWikiPage( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
+		(
+			!( object as any ).performer ||
+			isMediaWikiUser( ( object as any ).performer )
+		) &&
 		isMediaWikiEvent( object );
 }

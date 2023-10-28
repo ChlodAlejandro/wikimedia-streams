@@ -32,6 +32,9 @@ export function isMediaWikiRevisionCreateEvent( object: any ):
 		hasMediaWikiPage( object ) &&
 		hasMediaWikiRevision( object ) &&
 		hasMediaWikiRevisionSlots( object ) &&
-		isMediaWikiUser( ( object as any ).performer ) &&
+		(
+			!( object as any ).performer ||
+			isMediaWikiUser( ( object as any ).performer )
+		) &&
 		isMediaWikiEvent( object );
 }
