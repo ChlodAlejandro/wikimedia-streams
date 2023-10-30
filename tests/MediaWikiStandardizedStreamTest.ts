@@ -87,7 +87,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -112,7 +114,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -136,7 +140,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -172,7 +178,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -205,7 +213,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -237,7 +247,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -263,7 +275,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -290,7 +304,9 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
 
@@ -320,6 +336,8 @@ test.each( [
 			stream.close();
 		}
 	} );
-	await stream.waitUntilClosed();
+	while ( successes[ topic ] === 0 ) {
+		await stream.waitUntilClosed();
+	}
 	expect.hasAssertions();
 } );
