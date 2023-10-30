@@ -552,7 +552,7 @@ export class WikimediaStream extends EventEmitter {
 		} );
 
 		this.eventSource.addEventListener( 'error', ( e ) => {
-			if ( ( e as any ).status === 500 ) {
+			if ( ( e as any ).status === 500 || ( e as any ).status === 503 ) {
 				// Internal server error.
 				// Back off and try again.
 				setTimeout( this.open.bind( this, options ), 2e3 );
