@@ -24,6 +24,8 @@ import {
 	isMediaWikiRevisionTagsChangeEvent
 } from '../src/streams/MediaWikiRevisionTagsChangeEvent';
 
+const successes: Partial<Record<WikimediaEventStream, number>> = {};
+
 beforeAll( () => {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	expect( WikimediaStream.VERSION ).toBe( require( '../package.json' ).version );
@@ -58,7 +60,7 @@ test.each( [
 	<const>'eventgate-main.test.event',
 	<const>'test'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isWikimediaEvent( data ) ).toBe( false );
@@ -81,7 +83,7 @@ test.each( [
 		if ( data.test_map ) {
 			expect( typeof data.test_map ).toEqual( 'object' );
 		}
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -95,7 +97,7 @@ test.each( [
 	<const>'mediawiki.revision-create',
 	<const>'revision-create'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiEvent( data ) || data ).toBe( true );
@@ -106,7 +108,7 @@ test.each( [
 		if ( data.performer ) {
 			testUser( data.performer );
 		}
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -118,7 +120,7 @@ test.each( [
 	<const>'mediawiki.page-delete',
 	<const>'page-delete'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiPageDeleteEvent( data ) || data ).toBe( true );
@@ -130,7 +132,7 @@ test.each( [
 		}
 		expect( typeof data.rev_id ).toBe( 'number' );
 		expect( typeof data.rev_count ).toBe( 'number' );
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -142,7 +144,7 @@ test.each( [
 	<const>'mediawiki.page-links-change',
 	<const>'page-links-change'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiPageLinksChangeEvent( data ) || data ).toBe( true );
@@ -166,7 +168,7 @@ test.each( [
 				expect( typeof link.external ).toBe( 'boolean' );
 			}
 		}
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -178,7 +180,7 @@ test.each( [
 	<const>'mediawiki.page-move',
 	<const>'page-move'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiPageMoveEvent( data ) || data ).toBe( true );
@@ -199,7 +201,7 @@ test.each( [
 			expect( typeof data.new_redirect_page.page_namespace ).toBe( 'number' );
 			expect( typeof data.new_redirect_page.rev_id ).toBe( 'number' );
 		}
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -211,7 +213,7 @@ test.each( [
 	<const>'mediawiki.page-properties-change',
 	<const>'page-properties-change'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiPagePropertiesChangeEvent( data ) || data ).toBe( true );
@@ -231,7 +233,7 @@ test.each( [
 			propertiesFound = true;
 		}
 		expect( propertiesFound ).toBeTruthy();
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -243,7 +245,7 @@ test.each( [
 	<const>'mediawiki.page-undelete',
 	<const>'page-undelete'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiPagePropertiesChangeEvent( data ) || data ).toBe( true );
@@ -257,7 +259,7 @@ test.each( [
 			expect( typeof data.prior_state ).toBe( 'object' );
 			expect( typeof data.prior_state.page_id ).toBe( 'number' );
 		}
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -268,7 +270,7 @@ test.each( [
 test.each( [
 	<const>'mediawiki.revision-tags-change'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiRevisionTagsChangeEvent( data ) || data ).toBe( true );
@@ -284,7 +286,7 @@ test.each( [
 		for ( const priorTag of data.prior_state.tags ) {
 			expect( typeof priorTag ).toBe( 'string' );
 		}
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
@@ -295,7 +297,7 @@ test.each( [
 test.each( [
 	<const>'mediawiki.revision-visibility-change'
 ] )( '%s', async ( topic ) => {
-	let successCount = 0;
+	successes[ topic ] = 0;
 	const stream = await generateStream( topic );
 	stream.on( topic, ( data ) => {
 		expect( isMediaWikiRevisionVisibilityChangeEvent( data ) || data ).toBe( true );
@@ -314,7 +316,7 @@ test.each( [
 		expect( typeof data.prior_state.visibility.text ).toBe( 'boolean' );
 		expect( typeof data.prior_state.visibility.user ).toBe( 'boolean' );
 		expect( typeof data.prior_state.visibility.comment ).toBe( 'boolean' );
-		if ( ++successCount > 20 ) {
+		if ( ++successes[ topic ] > 20 ) {
 			stream.close();
 		}
 	} );
