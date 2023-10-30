@@ -10,9 +10,18 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v4
-            -   run: |
+            -   name: Download spec
+                run: |
+                    curl https://stream.wikimedia.org/?spec > /tmp/spec.json
+            -   name: Upload spec
+                uses: actions/upload-artifact@v3
+                with:
+                    name: spec
+                    path: /tmp/spec.json
+            -   name: Verify spec
+                run: |
                     EXPECT="$( cat spec.json | sha1sum )"
-                    ACTUAL="$( curl https://stream.wikimedia.org/?spec | sha1sum )"
+                    ACTUAL="$( cat /tmp/spec.json | sha1sum )"
                     echo "Expected: $EXPECT"
                     echo "Actual:   $ACTUAL"
                     if [[ "$EXPECT" != "$ACTUAL" ]]; then
