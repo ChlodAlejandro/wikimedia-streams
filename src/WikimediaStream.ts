@@ -369,7 +369,7 @@ export class WikimediaStream extends EventEmitter {
 	/**
 	 * The version of this package. Used for the default `User-Agent` header.
 	 */
-	static readonly VERSION = '2.0.1';
+	static readonly VERSION = '2.1.0';
 
 	/**
 	 * The generic user agent to be used by wikimedia-streams when
