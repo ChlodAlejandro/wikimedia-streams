@@ -1,6 +1,6 @@
 {
     "name": "wikimedia-streams",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "description": "Receive events from Wikimedia wikis using the Wikimedia Event Platforms' EventStreams.",
     "main": "build/index.js",
     "files": [
@@ -29,7 +29,10 @@
         "sse",
         "stream",
         "eventstreams",
-        "eventsource"
+        "eventsource",
+        "wiki",
+        "nodejs",
+        "node"
     ],
     "author": "Chlod Alejandro <chlod@chlod.net>",
     "license": "Apache-2.0",
