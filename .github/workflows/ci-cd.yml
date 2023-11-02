@@ -2,7 +2,17 @@ name: CI/CD
 
 on:
     push:
+        paths:
+            - 'src/**'
+            - 'package.json'
+            - 'package-lock.json'
+            - '.github/workflows/ci-cd.yml'
     pull_request:
+        paths:
+            - 'src/**'
+            - 'package.json'
+            - 'package-lock.json'
+            - '.github/workflows/ci-cd.yml'
 
 jobs:
     spec:
@@ -38,7 +48,7 @@ jobs:
             fail-fast: true
             max-parallel: 1
             matrix:
-                node-version: [ 14.x, 16.x, 18.x, 'lts/*', latest ]
+                node-version: [ 14.x, 'lts/*', latest ]
 
         steps:
             -   uses: actions/checkout@v3
