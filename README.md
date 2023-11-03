@@ -237,10 +237,7 @@ are events that are sent to ensure that the stream is still active. These events
 out by wikimedia-streams by default. To enable them, set the `enableCanary` option to `true`.
 Note that you will be required to filter out these events yourself, or process them accordingly.
 
-```ts
-
 ## License
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
