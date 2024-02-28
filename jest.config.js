@@ -2,8 +2,9 @@
 module.exports = {
 
 	projects: [
-		'<rootDir>/tests/esm.jest.config.js',
-		'<rootDir>/tests/default.jest.config.js'
+		'<rootDir>/tests/default.jest.config.js',
+		'<rootDir>/tests/browser.jest.config.js',
+		'<rootDir>/tests/esm.jest.config.js'
 	],
 
 	testTimeout: 120e3,

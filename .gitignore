@@ -5,6 +5,9 @@
 # Dependencies
 node_modules/
 
+# Test artifacts
+tests/artifacts/
+
 # Build artifacts
 dist/
 coverage/

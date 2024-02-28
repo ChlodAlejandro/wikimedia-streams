@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const sourcemaps = require( 'rollup-plugin-sourcemaps' );
 const typescript = require( 'rollup-plugin-typescript2' );
 const terser = require( '@rollup/plugin-terser' );
 
@@ -35,7 +34,6 @@ module.exports = {
 		}
 	],
 	plugins: [
-		process.env.NODE_ENV === 'production' && sourcemaps(),
 		typescript( {
 			tsconfig: 'tsconfig.browser.json'
 		} )

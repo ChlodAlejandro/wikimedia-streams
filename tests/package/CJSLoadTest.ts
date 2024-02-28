@@ -3,6 +3,6 @@
 
 const WikimediaStream = require( '../..' ).default;
 
-test( 'Module resolution test: CommonJS', () => {
+test( 'Module load test: CommonJS', () => {
 	new WikimediaStream( 'recentchange', {} ).close();
 } );

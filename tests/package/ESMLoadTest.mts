@@ -1,5 +1,5 @@
 import WikimediaStream from "../..";
 
-test('Module resolution test: ESM', () => {
+test('Module load test: ESM', () => {
 	new WikimediaStream("recentchange", {}).close();
 });

@@ -30,6 +30,7 @@ If you're using wikimedia-streams in a browser, you have two options:
 * If you're using a script tag (through JSDelivr, etc.), you'll need to load
   both wikimedia-streams and an `EventEmitter` polyfill.
   ```html
+  <!-- Load `eventemitter3` for an EventEmitter polyfill. -->
   <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/eventemitter3/5.0.1/index.min.js" />
   <!-- Try to self-host wikimedia-streams if you can! -->
   <script src="https://cdn.jsdelivr.net/npm/wikimedia-streams@latest" />
@@ -261,9 +262,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Type documentation is partially derived from https://stream.wikimedia.org/?doc, also licensed under the Apache License, Version 2.0.
+Type documentation is partially derived from https://stream.wikimedia.org/?doc, also licensed under the Apache License, Version 2.0. `spec.json` is downloaded from https://stream.wikimedia.org/?spec, also licensed under the Apache License, Version 2.0.
 
 ## Disclaimer
 You are expected to follow the Wikimedia Foundation [Terms of Use](https://foundation.wikimedia.org/wiki/Terms_of_Use) when accessing EventStreams. The package developer(s) are not liable for any damage caused by you using this package.
 
-If you're developing a bot that runs on Wikimedia wikis which edits based on changes found on EventStreams, be sure to follow the [bot best practices](https://www.mediawiki.org/wiki/Manual:Creating_a_bot#General_guidelines_for_running_a_bot) when making edits or other changes. 
+If you're developing a bot that runs on Wikimedia wikis which edits based on changes found on EventStreams, be sure to follow the [bot best practices](https://www.mediawiki.org/wiki/Manual:Creating_a_bot#General_guidelines_for_running_a_bot) when making edits or other changes. This includes setting a proper user agent, which is supported by this package.
