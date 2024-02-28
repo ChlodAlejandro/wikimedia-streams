@@ -25,11 +25,18 @@ const WikimediaStream = require("wikimedia-streams").default;
 const stream = new WikimediaStream("recentchange");
 ```
 
-If you're using wikimedia-streams in a browser, you'll need:
-* a bundler (such as Webpack)
-* a polyfill for Node.js `EventEmitter`
-  * Browserify and Webpack do this by default, but if these are unavailable to you,
-    use [`events`](https://www.npmjs.com/package/events).
+If you're using wikimedia-streams in a browser, you have two options:
+* If you're using a bundler, you can use the same code as above.
+* If you're using a script tag (through JSDelivr, etc.), you'll need to load
+  both wikimedia-streams and an `EventEmitter` polyfill.
+  ```html
+  <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/eventemitter3/5.0.1/index.min.js" />
+  <!-- Try to self-host wikimedia-streams if you can! -->
+  <script src="https://cdn.jsdelivr.net/npm/wikimedia-streams@latest" />
+  <script>
+  	const stream = new WikimediaStream.default("recentchange");
+  </script>
+  ```
 
 ## Usage
 After setup, you can listen to sent events using `.on`.
