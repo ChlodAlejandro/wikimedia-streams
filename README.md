@@ -174,7 +174,8 @@ stream.filter("mediawiki.recentchange")
 	});
 ```
 
-Due to limitations in TypeScript, the received type may be too broad compared to the actual values of the types.
+Due to [limitations in TypeScript](https://github.com/microsoft/TypeScript/issues/4196),
+the received type may be too broad compared to the actual values of the types.
 
 ### Examples
 1. Get all edits from the English Wikipedia.
