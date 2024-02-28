@@ -10,8 +10,6 @@ This package works best with TypeScript, but also works with plain JavaScript.
 
 ## Usage
 
-**Note for Toolforge users:** This package requires at least Node 14.x, which is not available on the [Toolforge Grid Engine](https://wikitech.wikimedia.org/wiki/Help:Toolforge/Grid). Use the Node 14.x Docker image (`toolforge-node14-sssd-base`) on Kubernetes or [nvm](https://github.com/nvm-sh/nvm).
-
 Create a new WikimediaStream with the following:
 
 ```ts
