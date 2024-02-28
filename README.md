@@ -8,7 +8,7 @@ wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://
 
 This package works best with TypeScript, but also works with plain JavaScript.
 
-## Usage
+## Setup
 
 Create a new WikimediaStream with the following:
 
@@ -25,7 +25,14 @@ const WikimediaStream = require("wikimedia-streams").default;
 const stream = new WikimediaStream("recentchange");
 ```
 
-From here, you can listen to sent events using `.on`.
+If you're using wikimedia-streams in a browser, you'll need:
+* a bundler (such as Webpack)
+* a polyfill for Node.js `EventEmitter`
+  * Browserify and Webpack do this by default, but if these are unavailable to you,
+    use [`events`](https://www.npmjs.com/package/events).
+
+## Usage
+After setup, you can listen to sent events using `.on`.
 
 ```ts
 stream.on("recentchange", (data: MediaWikiRecentChangeEvent, event) => {

@@ -1,6 +1,6 @@
-import WikimediaStream from '../src/WikimediaStream';
-import { version } from '../package.json';
-import { WikimediaStreamFilter } from '../src';
+import WikimediaStream from '../../src/WikimediaStream';
+import { version } from '../../package.json';
+import { WikimediaStreamFilter } from '../../src';
 
 beforeAll( () => {
 	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${

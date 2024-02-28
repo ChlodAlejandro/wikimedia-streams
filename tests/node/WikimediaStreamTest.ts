@@ -1,8 +1,8 @@
 import WikimediaStream, {
 	WikimediaEventStreamAliases,
 	WikimediaEventStreams, WikimediaStreamLastEventID
-} from '../src/WikimediaStream';
-import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEvent';
+} from '../../src/WikimediaStream';
+import MediaWikiRecentChangeEvent from '../../src/streams/MediaWikiRecentChangeEvent';
 
 beforeAll( () => {
 	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${

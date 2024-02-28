@@ -1,9 +1,11 @@
 /** @type {import("@jest/types").Config.InitialOptions} */
 module.exports = {
 
-	preset: 'ts-jest',
-	testEnvironment: 'node',
-	testRegex: '[\\/]tests[\\/][^\\\\/]+\\.ts$',
+	projects: [
+		'<rootDir>/tests/esm.jest.config.js',
+		'<rootDir>/tests/default.jest.config.js'
+	],
+
 	testTimeout: 120e3,
 
 	maxWorkers: 1,

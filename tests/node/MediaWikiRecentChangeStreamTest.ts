@@ -1,7 +1,7 @@
-import WikimediaStream from '../src';
-import MediaWikiRecentChangeEvent from '../src/streams/MediaWikiRecentChangeEvent';
-import { version } from '../package.json';
-import { testComment, testWikimediaEvent } from './common/CommonTests';
+import WikimediaStream from '../../src';
+import MediaWikiRecentChangeEvent from '../../src/streams/MediaWikiRecentChangeEvent';
+import { version } from '../../package.json';
+import { testComment, testWikimediaEvent } from '../common/CommonTests';
 
 /**
  * @param data

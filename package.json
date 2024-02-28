@@ -2,16 +2,26 @@
     "name": "wikimedia-streams",
     "version": "2.1.0",
     "description": "Receive events from Wikimedia wikis using the Wikimedia Event Platforms' EventStreams.",
-    "main": "build/index.js",
+    "main": "dist/cjs/index.js",
     "files": [
-        "build/",
+        "dist/",
         "CHANGELOG.md",
         "LICENSE",
         "README"
     ],
+    "exports": {
+        ".": {
+            "types": "./dist/types/index.d.ts",
+            "require": "./dist/cjs/index.js",
+            "import": "./dist/esm/index.js",
+            "default": "./dist/esm/index.js"
+        }
+    },
     "scripts": {
-        "build": "tsc",
-        "prepack": "npm run build",
+        "build": "tsc -b ./tsconfig.esm.json ./tsconfig.cjs.json ./tsconfig.types.json",
+        "prebuild": "rimraf dist/",
+        "postbuild": "node scripts/postbuild-esm.js",
+        "prepack": "npm run build && npm run test",
         "test": "jest --verbose"
     },
     "engines": {
@@ -51,13 +61,12 @@
         "eslint-plugin-import": "^2.28.1",
         "eslint-plugin-jsdoc": "^46.8.2",
         "jest": "^29.5.0",
+        "rimraf": "^5.0.5",
         "ts-jest": "^29.1.0",
         "ts-node": "^10.9.1",
         "typescript": "^5.0.4"
     },
     "dependencies": {
-        "@types/yargs": "^17.0.25",
-        "eventsource": "^2.0.0",
-        "yargs": "^17.7.2"
+        "eventsource": "^2.0.0"
     }
 }

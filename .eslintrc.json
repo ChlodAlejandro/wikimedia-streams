@@ -62,5 +62,5 @@
         "space-before-function-paren": "off",
         "@typescript-eslint/space-before-function-paren": ["error", { "anonymous": "always", "named": "never" }]
     },
-    "ignorePatterns": [ "*.d.ts", "node_modules/", "gen/" ]
+    "ignorePatterns": [ "*.d.ts", "node_modules/", "dist/" ]
 }

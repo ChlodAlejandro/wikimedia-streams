@@ -1,34 +1,34 @@
-import WikimediaStream, { WikimediaEventStream } from '../src';
+import WikimediaStream, { WikimediaEventStream } from '../../src';
 import {
 	isMediaWikiEvent,
 	isWikimediaEvent,
 	isWikimediaEventMeta
-} from '../src/streams/EventStream';
+} from '../../src/streams/EventStream';
 import {
 	testComment,
 	testMediaWikiEvent,
 	testPage,
 	testRevision,
 	testUser
-} from './common/CommonTests';
-import { isMediaWikiPageDeleteEvent } from '../src/streams/MediaWikiPageDeleteEvent';
-import { isMediaWikiPageLinksChangeEvent } from '../src/streams/MediaWikiPageLinksChangeEvent';
-import { isMediaWikiPageMoveEvent } from '../src/streams/MediaWikiPageMoveEvent';
+} from '../common/CommonTests';
+import { isMediaWikiPageDeleteEvent } from '../../src/streams/MediaWikiPageDeleteEvent';
+import { isMediaWikiPageLinksChangeEvent } from '../../src/streams/MediaWikiPageLinksChangeEvent';
+import { isMediaWikiPageMoveEvent } from '../../src/streams/MediaWikiPageMoveEvent';
 import {
 	isMediaWikiPagePropertiesChangeEvent
-} from '../src/streams/MediaWikiPagePropertiesChangeEvent';
+} from '../../src/streams/MediaWikiPagePropertiesChangeEvent';
 import {
 	isMediaWikiRevisionVisibilityChangeEvent
-} from '../src/streams/MediaWikiRevisionVisibilityChangeEvent';
+} from '../../src/streams/MediaWikiRevisionVisibilityChangeEvent';
 import {
 	isMediaWikiRevisionTagsChangeEvent
-} from '../src/streams/MediaWikiRevisionTagsChangeEvent';
+} from '../../src/streams/MediaWikiRevisionTagsChangeEvent';
 
 const successes: Partial<Record<WikimediaEventStream, number>> = {};
 
 beforeAll( () => {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	expect( WikimediaStream.VERSION ).toBe( require( '../package.json' ).version );
+	expect( WikimediaStream.VERSION ).toBe( require( '../../package.json' ).version );
 
 	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${
 		WikimediaStream.VERSION

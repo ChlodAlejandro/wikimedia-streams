@@ -310,7 +310,7 @@ export class WikimediaStreamFilter<
 
 	private cleanupListenerCache() {
 		const parentListeners = this.stream.rawListeners( this.eventType );
-		for ( const [ originalListener, listener ] of this.listenerCache.entries() ) {
+		for ( const [ originalListener, listener ] of Array.from( this.listenerCache.entries() ) ) {
 			if ( !parentListeners.includes( listener ) ) {
 				this.listenerCache.delete( originalListener );
 			}
@@ -378,7 +378,7 @@ export class WikimediaStreamFilter<
 
 	/** @inheritDoc */
 	removeAllListeners(): this & ClosedWikimediaStreamsFilter {
-		for ( const listener of this.listenerCache.values() ) {
+		for ( const listener of Array.from( this.listenerCache.values() ) ) {
 			this.stream.removeListener( this.eventType, listener );
 		}
 		this.listenerCache.clear();
