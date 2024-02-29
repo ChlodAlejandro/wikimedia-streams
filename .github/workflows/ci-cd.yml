@@ -130,6 +130,12 @@ jobs:
             -   name: Test
                 run: npm test
             -   name: Publish
+                if: ${{ !contains( github.ref, '-rc' ) }}
                 run: npm publish
+                env:
+                    NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_KEY }}
+            -   name: Publish (release candidate)
+                if: ${{ contains( github.ref, '-rc' ) }}
+                run: npm publish --tag rc
                 env:
                     NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_KEY }}
