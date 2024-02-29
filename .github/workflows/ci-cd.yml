@@ -7,6 +7,8 @@ on:
             - 'package.json'
             - 'package-lock.json'
             - '.github/workflows/ci-cd.yml'
+        branches-ignore:
+            - dependabot/**
     pull_request:
         paths:
             - 'src/**'
