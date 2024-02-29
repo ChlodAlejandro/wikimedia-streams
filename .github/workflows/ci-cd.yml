@@ -69,6 +69,10 @@ jobs:
         needs: build
         runs-on: ubuntu-latest
 
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}--test-browser
+            cancel-in-progress: true
+
         steps:
             -   uses: actions/checkout@v4
             -   name: Use Node.js latest
@@ -95,6 +99,10 @@ jobs:
             matrix:
                 node-version: [ 14.x, 'lts/*', latest ]
 
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}--test-${{ matrix.node-version }}
+            cancel-in-progress: true
+
         steps:
             -   uses: actions/checkout@v4
             -   name: Use Node.js ${{ matrix.node-version }}
@@ -110,10 +118,14 @@ jobs:
                     path: dist
             -   name: Test (node)
                 run: npm run test:node
-    deploy:
+    publish:
         name: Publish (npm)
         needs: [ test-node, test-browser ]
         if: ${{ startsWith( github.ref, 'refs/tags/v' ) }}
+
+        concurrency:
+            group: ${{ github.workflow }}--publish
+            cancel-in-progress: true
 
         runs-on: ubuntu-latest
         steps:
