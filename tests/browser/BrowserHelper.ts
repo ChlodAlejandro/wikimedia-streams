@@ -198,7 +198,7 @@ export default class BrowserHelper extends webdriver.WebDriver {
 	 * @param func
 	 * @param {...any} args
 	 */
-	async evaluate<T, U extends ( ...args: any[] ) => T>(
+	async evaluate<T, U extends ( ...args: any[] ) => PromiseOrNot<T>>(
 		func: U,
 		...args: Parameters<U>
 	): Promise<T> {

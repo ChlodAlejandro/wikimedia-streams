@@ -80,7 +80,7 @@ jobs:
             -   name: Test (browser)
                 run: npm run test:browser
     test-node:
-        name: Build and test
+        name: Test
         needs: build
         runs-on: ubuntu-latest
 

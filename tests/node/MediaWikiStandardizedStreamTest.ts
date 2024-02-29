@@ -10,7 +10,7 @@ import {
 	testPage,
 	testRevision,
 	testUser
-} from '../common/CommonTests';
+} from '../common/CommonTestChecks';
 import { isMediaWikiPageDeleteEvent } from '../../src/streams/MediaWikiPageDeleteEvent';
 import { isMediaWikiPageLinksChangeEvent } from '../../src/streams/MediaWikiPageLinksChangeEvent';
 import { isMediaWikiPageMoveEvent } from '../../src/streams/MediaWikiPageMoveEvent';

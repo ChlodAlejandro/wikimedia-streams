@@ -25,8 +25,16 @@ const WikimediaStream = require("wikimedia-streams").default;
 const stream = new WikimediaStream("recentchange");
 ```
 
-If you're using wikimedia-streams in a browser, you have two options:
-* If you're using a bundler, you can use the same code as above.
+Additional files are available under `dist/browser` for browser use:
+* `index.js` – for use in `<script>` tags and non-wiki pages (requires an EventEmitter polyfill)
+  * `WikimediaStreams` global exists, `WikimediaStreams` namespace is **NOT** exported
+* `bundle.js` – for use in userscripts
+    * `WikimediaStreams` global exists, `WikimediaStreams` namespace is **NOT** exported
+* `lib.js` – for use in MediaWiki-namespace JS files and gadgets
+    * `WikimediaStreams` global does **NOT** exist, `WikimediaStreams` namespace is exported
+
+If you're using wikimedia-streams in a browser, you have multiple options:
+* If you're using a bundler (Webpack, Browserify, etc.), you can use the same code as above.
 * If you're using a script tag (through JSDelivr, etc.), you'll need to load
   both wikimedia-streams and an `EventEmitter` polyfill.
   ```html
@@ -37,6 +45,39 @@ If you're using wikimedia-streams in a browser, you have two options:
   <script>
   	const stream = new WikimediaStream.default("recentchange");
   </script>
+  ```
+* If you're using `mw.loader.load` (userscripts), you have two options:
+  * You can load both wikimedia-streams and an `EventEmitter` polyfill.
+    ```js
+    await mw.loader.load("https://tools-static.wmflabs.org/cdnjs/ajax/libs/eventemitter3/5.0.1/index.min.js");
+    await mw.loader.load("<URL to a reupload of dist/browser/index.min.js>");
+    const stream = new WikimediaStream.default("recentchange");
+    ```
+  * You can also load a version of wikimedia-streams that includes an `EventEmitter` polyfill.
+    Use this in case you would like to upload the library on-wiki or would like to cut down on
+    request count.
+    ```js
+    await mw.loader.load("<URL to a reupload of dist/browser/bundle.min.js>");
+    const stream = new WikimediaStream.default("recentchange");
+    ```
+* If you're developing a gadget, you should probably use a MediaWiki-namespace JS file
+  for security reasons. If `dist/browser/lib.js` is uploaded as `MediaWiki:Gadget-wikimedia-streams.js`,
+  you can import it using a gadget dependency.
+  ```wikitext
+  <!-- MediaWiki:Gadgets-definition -->
+  * mygadget[ResourceLoader |dependencies=ext.gadget.wikimedia-streams]|mygadget.js
+  * wikimedia-streams[ResourceLoader |package |hidden]|wikimedia-streams.js
+  ```
+  ```js
+  // MediaWiki:Gadget-mygadget.js
+  mw.loader.using("ext.gadget.wikimedia-streams").then(function (require) {
+      var WikimediaStream = require("wikimedia-streams").default;
+  	  var stream = new WikimediaStream("recentchange");
+  });
+  
+  // or if `|package` is set in mygadget's definition
+  var WikimediaStream = require("ext.gadget.wikimedia-streams").default;
+  var stream = new WikimediaStream("recentchange");
   ```
 
 ## Usage
