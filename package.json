@@ -26,7 +26,9 @@
         "prebuild": "rimraf dist/",
         "postbuild": "node scripts/postbuild-esm.js",
         "prepack": "npm run build && npm run test",
-        "test": "jest --verbose"
+        "test": "jest --verbose",
+        "test:browser": "jest --verbose tests/browser",
+        "test:node": "jest --verbose --testPathIgnorePatterns tests/browser"
     },
     "engines": {
         "node": ">=14.15.0"

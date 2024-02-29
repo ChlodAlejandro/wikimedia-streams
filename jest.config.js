@@ -5,7 +5,7 @@ module.exports = {
 		'<rootDir>/tests/default.jest.config.js',
 		'<rootDir>/tests/browser.jest.config.js',
 		'<rootDir>/tests/esm.jest.config.js'
-	],
+	].filter( v => !!v ),
 
 	testTimeout: 120e3,
 

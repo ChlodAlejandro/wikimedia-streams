@@ -19,6 +19,9 @@ module.exports = {
 	testEnvironment: 'node',
 	testMatch: [
 		'<rootDir>/tests/**/*Test{,s}.mts'
+	],
+	testPathIgnorePatterns: [
+		'<rootDir>/tests/browser/.+'
 	]
 
 };
