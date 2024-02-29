@@ -1,3 +1,16 @@
+# 3.0.0
+* **BREAKING CHANGE:** Various files moved around; the main file is now `dist/cjs/index.js`.
+* Added browser support
+* `require`/`import`/`browser` exports now available
+* `dist/browser/lib.js` is now available for on-wiki gadget use
+* `dist/browser/bundle.js` is now available for on-wiki userscript use
+* Radical TypeScript configuration build changes
+* Added Rollup as a bundler and Selenium Webdriver as a browser test runner
+
+No changes to method signatures is expected with this version; the library will use
+Node.js' native EventEmitter when running on Node, and an EventEmitter polyfill and
+native EventSource on browsers.
+
 # 2.1.0
 * Added option to avoid filtering out canary events: `enableCanary`.
 

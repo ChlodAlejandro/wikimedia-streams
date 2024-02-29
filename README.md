@@ -4,9 +4,11 @@
 [![npm version](https://img.shields.io/npm/v/wikimedia-streams.svg?style=flat-square)](https://www.npmjs.org/package/wikimedia-streams)
 [![npm downloads](https://img.shields.io/npm/dm/wikimedia-streams.svg?style=flat-square)](http://npm-stat.com/charts.html?package=wikimedia-streams)
 
-wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams) in order to serve real-time changes to Wikimedia wikis. This entire library is typed, which makes parameter handling well-documented and defined. As of now, this package only works with Node.js. Browser support is planned in the future.
+wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams) in order to serve real-time changes to Wikimedia wikis. This entire library is typed, which makes parameter handling well-documented and defined.
 
 This package works best with TypeScript, but also works with plain JavaScript.
+
+By default, this package requires an [`EventEmitter`](https://nodejs.org/docs/latest/api/events.html#class-eventemitter) polyfill when used on a browser. Special output files with a bundled EventEmitter polyfill for userscripts and gadgets are available; see below for more information. Really old browser may also need an [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) polyfill; this must be loaded separately, as this package doesn't provide a version bundled with such a polyfill. On Node.js, native `EventEmitter` is used, and [eventsource](https://www.npmjs.com/package/eventsource) is used as an EventSource polyfill. This dependency structure allows the package to have the same signature in the browser and in Node. 
 
 ## Setup
 
