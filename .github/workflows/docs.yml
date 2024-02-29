@@ -37,6 +37,7 @@ jobs:
                     npx --yes typedoc \
                         --out ../docs \
                         --cleanOutputDir false \
+                        --tsconfig ./tsconfig.types.json \
                         src/index.ts
 
             # Commit
