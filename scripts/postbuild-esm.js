@@ -15,7 +15,6 @@ function processImports( directory ) {
 		if ( entry.isDirectory() ) {
 			processImports( entryPath );
 		} else if ( entry.isFile() ) {
-			console.log( entry );
 			let content = fs.readFileSync( entryPath, 'utf-8' );
 
 			const importRegex = /((?:ex|im)port .+? from\s*['"])(\..*?)(?<!\.js)(['"])/g;
