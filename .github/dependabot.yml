@@ -7,6 +7,25 @@ updates:
         update-types: ["version-update:semver-patch"]
     schedule:
       interval: "weekly"
+    groups:
+      typescript:
+        patterns:
+          - "typescript"
+      typedoc:
+        patterns:
+          - "typedoc"
+          - "typedoc-*"
+          - "@typedoc/*"
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@typescript-eslint/*"
+      rollup:
+        patterns:
+          - "rollup"
+          - "rollup-*"
+          - "@rollup/*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
