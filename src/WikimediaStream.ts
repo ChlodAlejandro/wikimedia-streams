@@ -478,23 +478,34 @@ export class WikimediaStream extends EventEmitter {
 			this.close();
 		}
 
-		const headers = Object.assign( {}, options.headers ?? {} );
+		const onBrowser = typeof window !== 'undefined';
+		const headers = {};
 
-		// Send Last-Event-ID to pick up from cancels, overriding the
-		// Last-Event-ID header provided in options.
-		if ( this._lastEventId ) {
-			headers[ 'Last-Event-ID' ] = this._lastEventId;
-		} else if ( options.lastEventId ) {
-			headers[ 'Last-Event-ID' ] = JSON.stringify( options.lastEventId );
-		} else if ( options.headers?.[ 'Last-Event-ID' ] ) {
-			headers[ 'Last-Event-ID' ] = options.headers[ 'Last-Event-ID' ];
-		}
-		// Send generic User-Agent when one has not been provided.
-		if (
-			Object.keys( headers )
-				.some( ( header ) => header.toLowerCase() === 'user-agent' ) === false
-		) {
-			headers[ 'User-Agent' ] = WikimediaStream.defaultUserAgent;
+		// Headers are not supported by browser EventSource instances.
+		// https://developer.mozilla.org/en-US/docs/Web/API/EventSource/EventSource#options
+		if ( !onBrowser ) {
+			const userHeaders = {};
+
+			for ( const header in options.headers ?? {} ) {
+				userHeaders[ header.toLowerCase() ] = options.headers[ header ];
+			}
+
+			// Send Last-Event-ID to pick up from cancels, overriding the
+			// Last-Event-ID header provided in options.
+			if ( this._lastEventId ) {
+				headers[ 'Last-Event-ID' ] = this._lastEventId;
+			} else if ( options.lastEventId ) {
+				headers[ 'Last-Event-ID' ] = JSON.stringify( options.lastEventId );
+			} else if ( userHeaders[ 'last-event-id' ] ) {
+				headers[ 'Last-Event-ID' ] = userHeaders[ 'last-event-id' ];
+			}
+
+			headers[ 'User-Agent' ] =
+				userHeaders[ 'user-agent' ] || userHeaders[ 'api-user-agent' ];
+			if ( !headers[ 'User-Agent' ] ) {
+				// Send a generic user agent if one wasn't provided.
+				headers[ 'User-Agent' ] = WikimediaStream.defaultUserAgent;
+			}
 		}
 
 		const url = new URL( `https://stream.wikimedia.org/v2/stream/${this.streams.join( ',' )}` );
