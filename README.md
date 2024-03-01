@@ -266,6 +266,9 @@ the received type may be too broad compared to the actual values of the types.
 	});
 	```
 ## Resuming streams
+> [!NOTE]
+> This feature is not available in browsers.
+
 After every received event, the stream stores the ID of the last event that was sent.
 This ID can be used to continue streams, so that you don't miss any events. You can
 also save this ID to a file when gracefully stopping for a restart, and use it again
@@ -287,6 +290,19 @@ const stream2 = new WikimediaStream( 'recentchange', {
 
 When re-opening a previously closed stream, the library will automatically resume
 from the last event that it processed. To avoid this, instantiate a new `WikimediaStream`.
+
+## User agent
+> [!NOTE]
+> This feature is not available in browsers.
+
+Wikimedia sites require developers to follow the [User-Agent policy](https://meta.wikimedia.org/wiki/User-Agent_policy), which requires a descriptive user agent to be sent with requests. By default, wikimedia-streams will send a generic `wikimedia-streams/${VERSION}` User-Agent header. You can set a custom user agent by providing the `headers.User-Agent` option when creating the stream object.
+```ts
+const stream = new WikimediaStream("recentchange", {
+    headers: {
+        "User-Agent": "MyCoolTool/1.0 (https://example.com/MyCoolTool)"
+    }
+});
+```
 
 ## Canary events
 [Canary events](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams#Canary_Events)
@@ -310,4 +326,4 @@ Type documentation is partially derived from https://stream.wikimedia.org/?doc, 
 ## Disclaimer
 You are expected to follow the Wikimedia Foundation [Terms of Use](https://foundation.wikimedia.org/wiki/Terms_of_Use) when accessing EventStreams. The package developer(s) are not liable for any damage caused by you using this package.
 
-If you're developing a bot that runs on Wikimedia wikis which edits based on changes found on EventStreams, be sure to follow the [bot best practices](https://www.mediawiki.org/wiki/Manual:Creating_a_bot#General_guidelines_for_running_a_bot) when making edits or other changes. This includes setting a proper user agent, which is supported by this package.
+If you're developing a bot that runs on Wikimedia wikis which edits based on changes found on EventStreams, be sure to follow the [bot best practices](https://www.mediawiki.org/wiki/Manual:Creating_a_bot#General_guidelines_for_running_a_bot) when making edits or other changes. This includes setting a proper user agent (required by [policy](https://meta.wikimedia.org/wiki/User-Agent_policy)), which is supported by this package.
