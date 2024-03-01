@@ -6,6 +6,7 @@
 * `dist/browser/bundle.js` is now available for on-wiki userscript use
 * Radical TypeScript configuration build changes
 * Added Rollup as a bundler and Selenium Webdriver as a browser test runner
+* Removed custom header case sensitivity
 
 No changes to method signatures is expected with this version; the library will use
 Node.js' native EventEmitter when running on Node, and an EventEmitter polyfill and
