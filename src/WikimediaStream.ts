@@ -506,6 +506,17 @@ export class WikimediaStream extends EventEmitter {
 				// Send a generic user agent if one wasn't provided.
 				headers[ 'User-Agent' ] = WikimediaStream.defaultUserAgent;
 			}
+
+			for ( const header in userHeaders ) {
+				if (
+					header === 'last-event-id' ||
+					header === 'user-agent' ||
+					header === 'api-user-agent'
+				) {
+					continue;
+				}
+				headers[ header ] = options.headers[ header ];
+			}
 		}
 
 		const url = new URL( `https://stream.wikimedia.org/v2/stream/${this.streams.join( ',' )}` );
@@ -564,7 +575,6 @@ export class WikimediaStream extends EventEmitter {
 	}
 
 	/**
-	 *
 	 * @param options
 	 */
 	attachEventListeners( options: WikimediaStreamOptions ) {
