@@ -86,7 +86,7 @@ If you're using wikimedia-streams in a browser, you have multiple options:
 After setup, you can listen to sent events using `.on`.
 
 ```ts
-stream.on("recentchange", (data: MediaWikiRecentChangeEvent, event) => {
+stream.on("recentchange", (data, event) => {
 	if (data.wiki === "enwiki") {
 		// Edits from the English Wikipedia
 		console.log(data.title); // Output the page title.
