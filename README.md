@@ -8,7 +8,14 @@ wikimedia-streams connects to Wikimedia's [Event Platform EventStreams](https://
 
 This package works best with TypeScript, but also works with plain JavaScript.
 
-By default, this package requires an [`EventEmitter`](https://nodejs.org/docs/latest/api/events.html#class-eventemitter) polyfill when used on a browser. Special output files with a bundled EventEmitter polyfill for userscripts and gadgets are available; see below for more information. Really old browser may also need an [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) polyfill; this must be loaded separately, as this package doesn't provide a version bundled with such a polyfill. On Node.js, native `EventEmitter` is used, and [eventsource](https://www.npmjs.com/package/eventsource) is used as an EventSource polyfill. This dependency structure allows the package to have the same signature in the browser and in Node. 
+By default, this package requires an [`EventEmitter`](https://nodejs.org/docs/latest/api/events.html#class-eventemitter) polyfill when used on a browser. Special output files with a bundled EventEmitter polyfill for userscripts and gadgets are available; see below for more information. Really old browser may also need an [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) polyfill; this must be loaded separately, as this package doesn't provide a version bundled with such a polyfill. On Node.js, native `EventEmitter` is used, and [eventsource](https://www.npmjs.com/package/eventsource) is used as an EventSource polyfill. This dependency structure allows the package to have the same signature in the browser and in Node.
+
+This package always supports the latest version of the spec. Minor version bumps on the spec count as breaking changes on this package. Refer to the following table for spec versions supported by each version.
+
+| Package version       | [Spec version](https://stream.wikimedia.org/?spec) |
+|-----------------------|----------------------------------------------------|
+| `2.0.0`&ndash;`3.0.0` | `0.8.0`, `0.9.0`                                    |
+| `0.1.0`&ndash;`2.0.0` | `0.7.3`                                            |
 
 ## Setup
 
