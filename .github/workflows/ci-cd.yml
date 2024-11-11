@@ -7,6 +7,7 @@ on:
             - 'package.json'
             - 'package-lock.json'
             - '.github/workflows/ci-cd.yml'
+            - 'tsconfig*'
         branches:
             - '*'
             - '!dependabot/**'
@@ -18,6 +19,7 @@ on:
             - 'package.json'
             - 'package-lock.json'
             - '.github/workflows/ci-cd.yml'
+            - 'tsconfig*'
 
 jobs:
     spec:
