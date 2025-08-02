@@ -1,9 +1,9 @@
-import type { default as WikimediaStream, WikimediaEventStreamEventTypes } from './WikimediaStream';
+import type { default as WikimediaStream } from './WikimediaStream';
 import {
 	RawWikimediaStreamEventListener,
-	WikimediaEventStream,
 	WikimediaStreamEventListener
 } from './WikimediaStream';
+import { WikimediaEventStream, WikimediaEventStreamEventTypes } from './streams/Types';
 
 interface FilterOptions {
 	/**

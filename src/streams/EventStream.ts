@@ -3,7 +3,6 @@
  * which is licensed under the Apache License 2.0.
  */
 
-import { WikimediaEventStream } from '../WikimediaStream';
 import EventGateTestEvent from './EventGateTestEvent';
 import MediaWikiPageDeleteEvent from './MediaWikiPageDeleteEvent';
 import MediaWikiPageLinksChangeEvent from './MediaWikiPageLinksChangeEvent';
@@ -14,6 +13,7 @@ import MediaWikiRecentChangeEvent from './MediaWikiRecentChangeEvent';
 import MediaWikiRevisionCreateEvent from './MediaWikiRevisionCreateEvent';
 import MediaWikiRevisionVisibilityChangeEvent from './MediaWikiRevisionVisibilityChangeEvent';
 import MediaWikiRevisionTagsChangeEvent from './MediaWikiRevisionTagsChangeEvent';
+import { WikimediaEventStream } from './Types';
 
 export interface WikimediaEventMeta {
 
