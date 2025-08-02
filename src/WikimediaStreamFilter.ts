@@ -3,7 +3,7 @@ import {
 	RawWikimediaStreamEventListener,
 	WikimediaStreamEventListener
 } from './WikimediaStream';
-import { WikimediaEventStream, WikimediaEventStreamEventTypes } from './streams/Types';
+import { WikimediaEventStream, WikimediaEventStreamEventTypes } from './streams';
 
 interface FilterOptions {
 	/**

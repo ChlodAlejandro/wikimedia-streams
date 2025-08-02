@@ -8,7 +8,7 @@ const srcDirectory = path.join(
 	process.env.npm_config_local_prefix || process.cwd(), 'src'
 );
 
-const wsFile = path.join( srcDirectory, 'WikimediaStream.ts' );
+const wsFile = path.join( srcDirectory, 'package', 'WikimediaStream.ts' );
 fs.writeFileSync(
 	wsFile,
 	fs.readFileSync( wsFile, 'utf8' )

@@ -1,13 +1,7 @@
 import type { WikimediaStream } from '../..';
 import type { EventEmitter } from 'events';
-import { isMediaWikiEvent } from '../../src/streams/EventStream';
-import {
-	testComment,
-	testMediaWikiEvent,
-	testPage,
-	testRevision, testUser
-} from '../common/CommonTestChecks';
 import BrowserHelper from './BrowserHelper';
+import { isRevisionCreateEvent } from '../../src/streams/Guards';
 
 declare global {
 	interface Window {
@@ -69,14 +63,7 @@ export function testWikimediaStreams( page: () => BrowserHelper ) {
 			return dataPromise;
 		} );
 		for ( const event of events ) {
-			expect( isMediaWikiEvent( event ) || event ).toBe( true );
-			testMediaWikiEvent( event );
-			testPage( event );
-			testComment( event );
-			testRevision( event );
-			if ( event.performer ) {
-				testUser( event.performer );
-			}
+			expect( isRevisionCreateEvent( event ) || event ).toBe( true );
 		}
 		expect.hasAssertions();
 	} );

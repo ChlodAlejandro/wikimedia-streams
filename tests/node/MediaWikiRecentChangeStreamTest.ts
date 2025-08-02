@@ -1,5 +1,5 @@
 import WikimediaStream from '../../src';
-import MediaWikiRecentChangeEvent from '../../src/streams/MediaWikiRecentChangeEvent';
+import { MediaWikiRecentChangeEvent } from '../../src/streams';
 import { version } from '../../package.json';
 import { testComment, testWikimediaEvent } from '../common/CommonTestChecks';
 
@@ -108,7 +108,6 @@ test( 'mediawiki.recentchange', ( doneFn ) => {
 	expect( stream ).toBeInstanceOf( WikimediaStream );
 
 	/**
-	 *
 	 * @param streamName
 	 */
 	function observeStream( streamName: 'mediawiki.recentchange' | 'recentchange' ) {

@@ -2,9 +2,10 @@
 module.exports = {
 
 	rootDir: '../',
+	preset: 'ts-jest/presets/default-esm',
 	moduleFileExtensions: [ 'js', 'ts', 'mts' ],
 	transform: {
-		'^.+\\.mts$': [
+		'^.+\\.m?ts$': [
 			'ts-jest',
 			{
 				useESM: true,
@@ -12,9 +13,9 @@ module.exports = {
 			}
 		]
 	},
+	extensionsToTreatAsEsm: [ '.mts' ],
 	transformIgnorePatterns: [
-		'node_modules',
-		'dist'
+		'node_modules/(?!(.*\\.mjs$))'
 	],
 	testEnvironment: 'node',
 	testMatch: [
@@ -22,6 +23,9 @@ module.exports = {
 	],
 	testPathIgnorePatterns: [
 		'<rootDir>/tests/browser/.+'
-	]
+	],
+	moduleNameMapper: {
+		'^(\\.{1,2}/.*)\\.js$': '$1'
+	}
 
 };

@@ -1,16 +1,16 @@
 import { EventEmitter } from 'events';
 import EventSource, { EventSourceInitDict } from 'eventsource';
-import WikimediaEventBase, { WikimediaEventMeta } from './streams/EventStream';
 import { WikimediaStreamFilter } from './WikimediaStreamFilter';
+import {
+	WikimediaEventStream,
+	WikimediaEventStreamEventTypes,
+	WikimediaEventStreams
+} from './streams';
 import {
 	AliasWikimediaEventStream,
 	SpecificWikimediaEventStream,
-	WikimediaEventStream,
-	WikimediaEventStreamAliases,
-	WikimediaEventStreamAliasesKey,
-	WikimediaEventStreamEventTypes,
-	WikimediaEventStreams
-} from './streams/Types';
+	WikimediaEventStreamAliases, WikimediaEventStreamAliasesKey
+} from './AliasedStreams';
 
 // This is in sync with standard EventSource ready states.
 export enum EventSourceState {
@@ -129,6 +129,8 @@ export declare interface WikimediaStream {
 		listener: WikimediaStreamEventListener<T>
 	): this;
 
+	once( event: '*', listener: ( event: any ) => void ): this;
+
 	once( event: 'open' | 'close', listener: () => void ): this;
 
 	once( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
@@ -137,6 +139,8 @@ export declare interface WikimediaStream {
 		event: T,
 		listener: WikimediaStreamEventListener<T>
 	): this;
+
+	on( event: '*', listener: ( event: any ) => void ): this;
 
 	on( event: 'open' | 'close', listener: () => void ): this;
 
@@ -147,6 +151,8 @@ export declare interface WikimediaStream {
 		listener: WikimediaStreamEventListener<T>
 	): this;
 
+	addListener( event: '*', listener: ( event: any ) => void ): this;
+
 	addListener( event: 'open' | 'close', listener: () => void ): this;
 
 	addListener( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
@@ -155,6 +161,8 @@ export declare interface WikimediaStream {
 		event: T,
 		listener: WikimediaStreamEventListener<T>
 	): this;
+
+	off( event: '*', listener: ( event: any ) => void ): this;
 
 	off( event: 'open' | 'close', listener: () => void ): this;
 
@@ -165,19 +173,21 @@ export declare interface WikimediaStream {
 		listener: WikimediaStreamEventListener<T>
 	): this;
 
+	removeListener( event: '*', listener: ( event: any ) => void ): this;
+
 	removeListener( event: 'open' | 'close', listener: () => void ): this;
 
 	removeListener( event: 'error', listener: ( error: ErrorEvent ) => void ): this;
 
 	removeAllListeners(
-		event?: 'open' | 'error' | 'close' | WikimediaEventStream
+		event?: 'open' | 'error' | 'close' | WikimediaEventStream | '*'
 	): this;
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	listeners( event: 'open' | 'error' | 'close' | WikimediaEventStream ): Function[];
+	listeners( event: 'open' | 'error' | 'close' | WikimediaEventStream | '*' ): Function[];
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	rawListeners( event: 'open' | 'error' | 'close' | WikimediaEventStream ): Function[];
+	rawListeners( event: 'open' | 'error' | 'close' | WikimediaEventStream | '*' ): Function[];
 
 	emit<T extends keyof WikimediaEventStreamEventTypes>(
 		eventName: T,
@@ -185,16 +195,20 @@ export declare interface WikimediaStream {
 		event: MessageEvent
 	): boolean;
 
+	emit( eventName: '*', data: any, event: MessageEvent ): boolean;
+
 	emit( event: 'open' | 'close' ): this;
 
 	emit( event: 'error', error: ErrorEvent ): this;
 
-	listenerCount( event: 'open' | 'error' | 'close' | WikimediaEventStream ): number;
+	listenerCount( event: 'open' | 'error' | 'close' | WikimediaEventStream | '*' ): number;
 
 	prependListener<T extends keyof WikimediaEventStreamEventTypes>(
 		event: T,
 		listener: WikimediaStreamEventListener<T>
 	): this;
+
+	prependListener( event: '*', listener: ( event: any ) => void ): this;
 
 	prependListener( event: 'open' | 'close', listener: () => void ): this;
 
@@ -204,6 +218,8 @@ export declare interface WikimediaStream {
 		event: T,
 		listener: WikimediaStreamEventListener<T>
 	): this;
+
+	prependOnceListener( event: '*', listener: ( event: any ) => void ): this;
 
 	prependOnceListener( event: 'open' | 'close', listener: () => void ): this;
 
@@ -515,9 +531,9 @@ export class WikimediaStream extends EventEmitter {
 		this.eventSource.addEventListener( 'message', async ( event: MessageEvent ) => {
 			this._lastEventId = event.lastEventId;
 
-			const data: WikimediaEventBase = JSON.parse( event.data );
+			const data: any = JSON.parse( event.data );
 
-			if ( skipCanary && ( data.meta as WikimediaEventMeta )?.domain === 'canary' ) {
+			if ( skipCanary && data.meta?.domain === 'canary' ) {
 				// Block all incoming canary events unless requested by user.
 				return;
 			}
@@ -530,6 +546,8 @@ export class WikimediaStream extends EventEmitter {
 					this.emit( alias, data, event );
 				}
 			}
+			// Emit to global listener.
+			this.emit( '*', data, event );
 		} );
 	}
 
@@ -541,8 +559,7 @@ export class WikimediaStream extends EventEmitter {
 			'open',
 			'error',
 			'close',
-			...WikimediaEventStreams,
-			...Object.keys( WikimediaEventStreamAliases )
+			...WikimediaEventStreams
 		];
 	}
 

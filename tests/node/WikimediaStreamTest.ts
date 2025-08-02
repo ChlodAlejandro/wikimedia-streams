@@ -1,8 +1,5 @@
-import WikimediaStream, {
-	WikimediaStreamLastEventID
-} from '../../src/WikimediaStream';
-import MediaWikiRecentChangeEvent from '../../src/streams/MediaWikiRecentChangeEvent';
-import { WikimediaEventStreamAliases, WikimediaEventStreams } from '../../src/streams/Types';
+import WikimediaStream, { WikimediaStreamLastEventID } from '../../src/WikimediaStream';
+import { MediaWikiRecentChangeEvent, WikimediaEventStreams } from '../../src';
 
 beforeAll( () => {
 	WikimediaStream.defaultUserAgent = `wikimedia-streams-ci/${
@@ -22,7 +19,7 @@ describe( 'WikimediaStream tests', () => {
 		return new Promise<void>( ( res, rej ) => {
 			const stream = new WikimediaStream( 'mediawiki.recentchange' );
 			stream.on( 'error', rej );
-			stream.on( 'open', () => {
+			stream.on( 'recentchange', () => {
 				res();
 				stream.close();
 			} );
@@ -33,7 +30,7 @@ describe( 'WikimediaStream tests', () => {
 		return new Promise<void>( ( res, rej ) => {
 			const stream = new WikimediaStream( 'recentchange' );
 			stream.on( 'error', rej );
-			stream.on( 'open', () => {
+			stream.on( 'recentchange', () => {
 				res();
 				stream.close();
 			} );
@@ -69,20 +66,21 @@ describe( 'WikimediaStream tests', () => {
 		} );
 		await stream1.waitUntilClosed();
 
+		const meta = referenceEvent.meta as any;
 		const stream2 = new WikimediaStream( 'recentchange', {
 			lastEventId: [ {
-				topic: referenceEvent.meta.topic,
-				partition: referenceEvent.meta.partition,
-				offset: referenceEvent.meta.offset
+				topic: meta.topic,
+				partition: meta.partition,
+				offset: meta.offset
 			} ],
 			autoStart: false
 		} );
 		stream2.on( 'recentchange', ( edit ) => {
-			if ( edit.meta.topic !== referenceEvent.meta.topic ) {
+			if ( ( edit.meta as any ).topic !== meta.topic ) {
 				// skip events that aren't from the right datacenter
 				return;
 			}
-			expect( edit.meta.offset ).toEqual( referenceEvent.meta.offset );
+			expect( ( edit.meta as any ).offset ).toEqual( meta.offset );
 			stream2.close();
 		} );
 		await stream2.open();
@@ -238,8 +236,7 @@ describe( 'WikimediaStream tests', () => {
 			'open',
 			'close',
 			'error',
-			...WikimediaEventStreams,
-			...Object.keys( WikimediaEventStreamAliases )
+			...WikimediaEventStreams
 		] ) );
 	} );
 

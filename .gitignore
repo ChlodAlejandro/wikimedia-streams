@@ -11,3 +11,4 @@ tests/artifacts/
 # Build artifacts
 dist/
 coverage/
+tmp/

@@ -1,5 +1,5 @@
-import WikimediaStream from "../..";
+import { WikimediaStream } from '../../src/';
 
-test('Module load test: ESM', () => {
-	new WikimediaStream("recentchange", {}).close();
-});
+test( 'Module load test: ESM', () => {
+	new WikimediaStream( 'recentchange', {} ).close();
+} );

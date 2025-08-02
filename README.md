@@ -10,11 +10,14 @@ This package works best with TypeScript, but also works with plain JavaScript.
 
 By default, this package requires an [`EventEmitter`](https://nodejs.org/docs/latest/api/events.html#class-eventemitter) polyfill when used on a browser. Special output files with a bundled EventEmitter polyfill for userscripts and gadgets are available; see below for more information. Really old browser may also need an [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) polyfill; this must be loaded separately, as this package doesn't provide a version bundled with such a polyfill. On Node.js, native `EventEmitter` is used, and [eventsource](https://www.npmjs.com/package/eventsource) is used as an EventSource polyfill. This dependency structure allows the package to have the same signature in the browser and in Node.
 
-This package always supports the latest version of the spec. Minor version bumps on the spec count as breaking changes on this package. Refer to the following table for spec versions supported by each version.
+This package always supports the latest version of the spec. Depending on the changed streams, minor version bumps on the spec may count as breaking changes on this package. Refer to the following table for spec versions supported by each version.
 
 | Package version       | [Spec version](https://stream.wikimedia.org/?spec) |
 |-----------------------|----------------------------------------------------|
-| `2.0.0`&ndash;`3.0.0` | `0.8.0`, `0.9.0`                                    |
+| `3.0.0`               | `0.17.0`                                           |
+| *Unsupported*         | `0.12.0`&ndash;`0.16.0`                            |
+| `2.0.0`&ndash;`3.0.0` | `0.11.0`                                           |
+| `2.0.0`&ndash;`3.0.0` | `0.8.0`, `0.9.0`, `0.10.0`                         |
 | `0.1.0`&ndash;`2.0.0` | `0.7.3`                                            |
 
 ## Setup
@@ -107,28 +110,7 @@ Don't forget to close the stream when you're done (or else Node will remain open
 stream.close();
 ```
 
-You can also use `.on("mediawiki.recentchange")` to listen to recent changes. A full list of streams and their available aliases are provided below.
-
-### Available streams
-
-| **Stream**                                                                                                          | **Aliases** | **Description**                                                                                      |
-|---------------------------------------------------------------------------------------------------------------------|---|------------------------------------------------------------------------------------------------------|
-| [eventgate-main.test.event](https://stream.wikimedia.org/v2/stream/eventgate-main.test.event)                       | `test` | Testing event.                                                                                       |
-| [mediawiki.page-create](https://stream.wikimedia.org/v2/stream/mediawiki.page-create)                               | `page-create` | Newly-created pages.                                                                                 |
-| [mediawiki.page-delete](https://stream.wikimedia.org/v2/stream/mediawiki.page-delete)                               | `page-delete` | Deleted pages.                                                                                       |
-| [mediawiki.page-links-change](https://stream.wikimedia.org/v2/stream/mediawiki.page-links-change)                   | `page-links-change` | Changes to page links.                                                                               |
-| [mediawiki.page-move](https://stream.wikimedia.org/v2/stream/mediawiki.page-move)                                   | `page-move` | Page moves.                                                                                          | 
-| [mediawiki.page-properties-change](https://stream.wikimedia.org/v2/stream/mediawiki.page-properties-change)         | `page-properties-change` | Changes to page properties.                                                                          |
-| [mediawiki.page-undelete](https://stream.wikimedia.org/v2/stream/mediawiki.page-undelete)                           | `page-undelete` | Undeleted pages.                                                                                     | 
-| [mediawiki.recentchange](https://stream.wikimedia.org/v2/stream/mediawiki.recentchange)                             | `recentchange` | Recent changes. The recent changes schema is drastically different from the schema of other streams. |
-| [mediawiki.revision-create](https://stream.wikimedia.org/v2/stream/mediawiki.revision-create)                       | `revision-create` | Edits to pages.                                                                                      |
-| [mediawiki.revision-tags-change](https://stream.wikimedia.org/v2/stream/mediawiki.revision-tags-change)             |  | Changes to revision tags. Added in v0.4.0.                                                            |
-| [mediawiki.revision-visibility-change](https://stream.wikimedia.org/v2/stream/mediawiki.revision-visibility-change) | | Changes to revision visibility (caused by suppression or revision deletion).                         |
-
-### Removed streams
-| **Stream**                                                                                                          | **Aliases**      | **Description**                                                                                                         |
-|---------------------------------------------------------------------------------------------------------------------|------------------|-------------------------------------------------------------------------------------------------------------------------|
-| [mediawiki.revision-score](https://stream.wikimedia.org/v2/stream/mediawiki.revision-score)                         | `revision-score` | ORES scores for edits to pages. Removed as of v2.0.0 (09-14-2023; [T342116](https://phabricator.wikimedia.org/T342116)) |
+You can also use `.on("mediawiki.recentchange")` to listen to recent changes.
 
 ### Multiple streams
 You can listen to multiple streams at once by passing an array as the parameter when creating a WikimediaStream.
